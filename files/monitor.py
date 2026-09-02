@@ -5,17 +5,15 @@ NYC DOB BIS monitor.
 For each building in buildings.json:
   1. Looks it up on BIS by borough + house number + street (same as the manual search).
   2. Opens Complaints, Violations-DOB, and Violations-OATH/ECB.
-  3. Compares every record row against the previous run.
-  4. Reports new records, status changes, and removed records.
-  5. Writes docs/index.html (the dashboard) and sends email / Slack alerts.
+  3. Counts how many records are open.
+  4. Alerts when an open count moves.
 
 Run:  python monitor.py
-Test: python monitor.py --dry-run      (no alerts sent)
-      python monitor.py --seed         (record current state, alert on nothing)
+      python monitor.py --dry-run      check and print, send nothing
+      python monitor.py --seed         record current counts, alert on nothing
 """
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -52,8 +50,13 @@ SECTION_LABEL = {
     "dob_violations": "Violations - DOB",
     "ecb_violations": "Violations - OATH/ECB",
 }
+SHORT_LABEL = {
+    "complaints": "Complaints",
+    "dob_violations": "DOB",
+    "ecb_violations": "OATH/ECB",
+}
 
-REQUEST_PAUSE = 2.0  # seconds between BIS requests, keeps the load light
+REQUEST_PAUSE = 2.0
 TIMEOUT = 40
 
 
@@ -76,7 +79,6 @@ def fetch(session, url, params=None, attempts=3):
 
 
 def open_profile(session, building):
-    """Run the Search by Property form and return (html, final_url)."""
     params = {
         "boro": str(building["boro"]),
         "houseno": str(building["houseno"]),
@@ -97,30 +99,26 @@ def find_bin(html):
 
 
 def find_section_links(html, base_url):
-    """Locate the Complaints / DOB Violations / ECB Violations links on the profile page."""
     soup = BeautifulSoup(html, "html.parser")
     found = {}
     for a in soup.find_all("a", href=True):
         text = " ".join(a.get_text(" ", strip=True).split()).lower()
-        href = a["href"]
-        target = urljoin(base_url, href)
-        low_href = href.lower()
+        low_href = a["href"].lower()
+        target = urljoin(base_url, a["href"])
 
-        is_ecb = "ecbquerybylocation" in low_href or "ecb" in text or "oath" in text
-        is_dob_viol = "actionsbylocation" in low_href and "stypeocv3=v" in low_href
-        is_complaint = "complaint" in low_href or "complaint" in text
-
-        if is_ecb and "ecb_violations" not in found:
+        if ("ecbquerybylocation" in low_href or "ecb" in text or "oath" in text) \
+                and "ecb_violations" not in found:
             found["ecb_violations"] = target
-        elif is_dob_viol and "dob_violations" not in found:
+        elif "actionsbylocation" in low_href and "stypeocv3=v" in low_href \
+                and "dob_violations" not in found:
             found["dob_violations"] = target
-        elif is_complaint and "complaint" in text and "complaints" not in found:
+        elif "complaint" in low_href and "complaint" in text \
+                and "complaints" not in found:
             found["complaints"] = target
     return found
 
 
 def fallback_links(bin_number):
-    """Direct URLs, used when the profile page markup changes."""
     b = str(bin_number)
     return {
         "complaints": BIS_BASE + "OverviewForComplaintServlet?" + urlencode(
@@ -136,23 +134,27 @@ def fallback_links(bin_number):
 
 
 # ----------------------------------------------------------------------
-# Row extraction and diffing
+# Counting open records
 # ----------------------------------------------------------------------
 
 NOISE = re.compile(r"(date of this report|requestid|©|copyright|privacy policy|back to)", re.I)
 HAS_RECORD = re.compile(r"\d{2}/\d{2}/\d{4}|\d{6,}|\b[A-Z]?\d{5,}\b")
 
+# BIS closed markers. Complaints close as CLOSED. DOB violations show RESOLVE or
+# DISMISS, and a dismissed number carries an asterisk (V*7052-18P). ECB violations
+# are open in ACTIVE status and closed in DISMISSED status.
+CLOSED = re.compile(
+    r"\b(CLOSED|RESOLVE[DS]?|DISMISS(ED)?|CURED|COMPLIED|WRITTEN OFF|PAID IN FULL)\b", re.I
+)
+OPEN_WORD = re.compile(r"\b(ACTIVE|OPEN|IN VIOLATION|DEFAULTED|OUTSTANDING)\b", re.I)
+DISMISSED_NUMBER = re.compile(r"^[A-Z]\*")
 
-def extract_rows(html):
-    """
-    Pull record rows out of a BIS results table.
 
-    BIS uses nested tables with no useful classes, so any <tr> with 3+ cells and
-    something record-shaped in it (a date or a long number) counts as a record.
-    Returns {key: row_text}.
-    """
+def count_records(html):
+    """Return (open_count, total_count) for a BIS results page."""
     soup = BeautifulSoup(html, "html.parser")
-    rows = {}
+    total = 0
+    open_count = 0
     for tr in soup.find_all("tr"):
         cells = [" ".join(td.get_text(" ", strip=True).split()) for td in tr.find_all(["td", "th"])]
         cells = [c for c in cells if c]
@@ -161,25 +163,15 @@ def extract_rows(html):
         line = " | ".join(cells)
         if NOISE.search(line) or not HAS_RECORD.search(line):
             continue
-        key = cells[0] if len(cells[0]) >= 4 else hashlib.sha1(line.encode()).hexdigest()[:12]
-        # collision guard when a record number repeats
-        base, n = key, 1
-        while key in rows and rows[key] != line:
-            n += 1
-            key = "%s#%d" % (base, n)
-        rows[key] = line
-    return rows
-
-
-def diff_rows(old, new):
-    added = [{"key": k, "text": v} for k, v in new.items() if k not in old]
-    removed = [{"key": k, "text": v} for k, v in old.items() if k not in new]
-    changed = [
-        {"key": k, "before": old[k], "after": new[k]}
-        for k in new
-        if k in old and old[k] != new[k]
-    ]
-    return {"added": added, "removed": removed, "changed": changed}
+        total += 1
+        if DISMISSED_NUMBER.match(cells[0]):
+            continue
+        if OPEN_WORD.search(line):
+            open_count += 1
+        elif not CLOSED.search(line):
+            # no status wording either way, count it open so nothing gets missed
+            open_count += 1
+    return open_count, total
 
 
 # ----------------------------------------------------------------------
@@ -189,9 +181,6 @@ def diff_rows(old, new):
 def check_building(session, building):
     result = {
         "label": building.get("label") or "%s %s" % (building["houseno"], building["street"]),
-        "boro": building["boro"],
-        "houseno": building["houseno"],
-        "street": building["street"],
         "bin": None,
         "profile_url": None,
         "sections": {},
@@ -205,23 +194,22 @@ def check_building(session, building):
 
         links = find_section_links(html, url)
         if bin_number:
-            for name, fallback in fallback_links(bin_number).items():
-                links.setdefault(name, fallback)
+            for name, fb in fallback_links(bin_number).items():
+                links.setdefault(name, fb)
 
         for name in SECTIONS:
             link = links.get(name)
             if not link:
-                result["sections"][name] = {"url": None, "rows": {}, "error": "link not found"}
+                result["sections"][name] = {"url": None, "error": "link not found"}
                 continue
             try:
                 page = fetch(session, link)
+                opened, total = count_records(page.text)
                 result["sections"][name] = {
-                    "url": link,
-                    "rows": extract_rows(page.text),
-                    "error": None,
+                    "url": link, "open": opened, "total": total, "error": None
                 }
             except Exception as exc:  # noqa: BLE001
-                result["sections"][name] = {"url": link, "rows": {}, "error": str(exc)}
+                result["sections"][name] = {"url": link, "error": str(exc)}
     except Exception as exc:  # noqa: BLE001
         result["error"] = str(exc)
     return result
@@ -233,18 +221,23 @@ def check_building(session, building):
 
 def build_alert_text(changes, checked_at):
     lines = ["NYC DOB BIS check - %s" % checked_at, ""]
-    for item in changes:
-        lines.append(item["building"])
-        for sec, d in item["by_section"].items():
-            for row in d["added"]:
-                lines.append("  NEW  [%s] %s" % (SECTION_LABEL[sec], row["text"]))
-            for row in d["changed"]:
-                lines.append("  CHG  [%s] %s" % (SECTION_LABEL[sec], row["after"]))
-                lines.append("       was: %s" % row["before"])
-            for row in d["removed"]:
-                lines.append("  GONE [%s] %s" % (SECTION_LABEL[sec], row["text"]))
-        if item.get("urls"):
-            lines.append("  " + item["urls"])
+    for c in changes:
+        lines.append(c["building"])
+        for sec in SECTIONS:
+            d = c["counts"].get(sec)
+            if not d:
+                continue
+            if d["was"] is None:
+                lines.append("  %-22s %3d open" % (SECTION_LABEL[sec], d["now"]))
+            elif d["now"] != d["was"]:
+                lines.append(
+                    "  %-22s %3d open   was %d   %+d"
+                    % (SECTION_LABEL[sec], d["now"], d["was"], d["now"] - d["was"])
+                )
+            else:
+                lines.append("  %-22s %3d open   no change" % (SECTION_LABEL[sec], d["now"]))
+        if c.get("url"):
+            lines.append("  " + c["url"])
         lines.append("")
     return "\n".join(lines)
 
@@ -290,114 +283,100 @@ def send_slack(text):
 
 def esc(s):
     return (
-        str(s)
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
+        str(s).replace("&", "&amp;").replace("<", "&lt;")
+        .replace(">", "&gt;").replace('"', "&quot;")
     )
 
 
 DASHBOARD_CSS = """
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:#101418;color:#E8E6E1;
- font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
- font-variant-numeric:tabular-nums}
-.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
+ font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
 header{border-bottom:2px solid #E8E6E1;padding-bottom:14px;margin-bottom:28px;
  display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between}
 h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
 .stamp{font-size:13px;color:#8A9199}
-.headline{font-size:clamp(28px,5vw,42px);line-height:1.15;font-weight:600;
- letter-spacing:-.02em;margin:0 0 28px;max-width:20ch}
+.headline{font-size:clamp(26px,4.5vw,38px);line-height:1.2;font-weight:600;
+ letter-spacing:-.02em;margin:0 0 26px;max-width:22ch}
 .headline.quiet{color:#8A9199;font-weight:400}
-.change{border-left:3px solid #E2564D;background:#171C21;padding:14px 16px;margin-bottom:10px}
-.change .who{font-weight:600;margin-bottom:6px}
-.change .kind{display:inline-block;min-width:52px;font-size:12px;font-weight:600;
- letter-spacing:.04em;color:#101418;background:#E2564D;padding:1px 6px;margin-right:8px}
-.change .kind.chg{background:#D9A441}
-.change .kind.gone{background:#5E7F6B;color:#E8E6E1}
-.change .row{font-size:14px;padding:4px 0;border-top:1px solid #232A31;
- word-break:break-word;color:#C9C6C0}
-.change .was{font-size:13px;color:#7C838A;padding-left:60px}
+.moved{border-left:3px solid #E2564D;background:#171C21;padding:12px 16px;margin-bottom:10px;
+ font-size:15px}
+.moved b{font-weight:600}
+.moved .delta{color:#E2564D;font-weight:600}
+.moved .delta.down{color:#5E9E7B}
 table{width:100%;border-collapse:collapse;margin-top:14px}
 th{text-align:left;font-size:12px;font-weight:600;color:#8A9199;
  padding:0 10px 8px 0;border-bottom:1px solid #2B333A}
 th.n,td.n{text-align:right;padding-right:14px}
-td{padding:11px 10px 11px 0;border-bottom:1px solid #1D2429;font-size:15px;vertical-align:top}
+td{padding:12px 10px 12px 0;border-bottom:1px solid #1D2429;font-size:15px;vertical-align:top}
 td a{color:#E8E6E1;text-decoration:none;border-bottom:1px solid #3C444B}
 td a:hover,td a:focus{border-bottom-color:#E8E6E1}
-td.n{font-weight:600}
+td.n{font-weight:600;font-size:19px}
 td.n.hot{color:#E2564D}
+td.n.zero{color:#5A6169}
+.of{display:block;font-size:11px;color:#6C737A;font-weight:400;margin-top:2px}
 .sub{display:block;font-size:12px;color:#7C838A;margin-top:3px}
 .err{color:#D9A441;font-size:13px}
 footer{margin-top:40px;font-size:13px;color:#6C737A;line-height:1.7}
 a:focus-visible{outline:2px solid #D9A441;outline-offset:3px}
-@media(max-width:620px){th.n,td.n{padding-right:6px}td{font-size:14px}}
+@media(max-width:620px){th.n,td.n{padding-right:6px}td.n{font-size:17px}}
 """
 
 
 def render_dashboard(results, changes, checked_at):
+    total_open = sum(s.get("open", 0) for r in results for s in r["sections"].values())
     if changes:
-        n = sum(
-            len(d["added"]) + len(d["changed"]) + len(d["removed"])
-            for c in changes
-            for d in c["by_section"].values()
-        )
-        head = '<p class="headline">%d record%s changed since the last check.</p>' % (
-            n,
-            "" if n == 1 else "s",
+        head = '<p class="headline">%d open record%s. %d building%s moved.</p>' % (
+            total_open, "" if total_open == 1 else "s",
+            len(changes), "" if len(changes) == 1 else "s",
         )
     else:
-        head = '<p class="headline quiet">No change since the last check.</p>'
+        head = '<p class="headline quiet">%d open record%s. Nothing moved.</p>' % (
+            total_open, "" if total_open == 1 else "s"
+        )
 
     blocks = []
-    for item in changes:
-        parts = ['<div class="change"><div class="who">%s</div>' % esc(item["building"])]
-        for sec, d in item["by_section"].items():
-            for row in d["added"]:
-                parts.append(
-                    '<div class="row"><span class="kind">NEW</span>%s: %s</div>'
-                    % (esc(SECTION_LABEL[sec]), esc(row["text"]))
-                )
-            for row in d["changed"]:
-                parts.append(
-                    '<div class="row"><span class="kind chg">CHANGED</span>%s: %s</div>'
-                    '<div class="was">was: %s</div>'
-                    % (esc(SECTION_LABEL[sec]), esc(row["after"]), esc(row["before"]))
-                )
-            for row in d["removed"]:
-                parts.append(
-                    '<div class="row"><span class="kind gone">CLEARED</span>%s: %s</div>'
-                    % (esc(SECTION_LABEL[sec]), esc(row["text"]))
-                )
-        parts.append("</div>")
-        blocks.append("".join(parts))
+    for c in changes:
+        bits = []
+        for sec in SECTIONS:
+            d = c["counts"].get(sec)
+            if not d or d["was"] is None or d["now"] == d["was"]:
+                continue
+            delta = d["now"] - d["was"]
+            cls = "delta down" if delta < 0 else "delta"
+            bits.append(
+                '%s %d open <span class="%s">(%+d)</span>'
+                % (esc(SHORT_LABEL[sec]), d["now"], cls, delta)
+            )
+        if bits:
+            blocks.append(
+                '<div class="moved"><b>%s</b>: %s</div>' % (esc(c["building"]), ", ".join(bits))
+            )
 
     rows = []
     for r in results:
-        counts = []
+        cells = []
         for sec in SECTIONS:
             s = r["sections"].get(sec, {})
-            if s.get("error"):
-                counts.append('<td class="n err">!</td>')
-            else:
-                c = len(s.get("rows", {}))
-                cls = "n hot" if c else "n"
-                cell = str(c)
-                if s.get("url"):
-                    cell = '<a href="%s">%s</a>' % (esc(s["url"]), c)
-                counts.append('<td class="%s">%s</td>' % (cls, cell))
+            if s.get("error") or "open" not in s:
+                cells.append('<td class="n err">!</td>')
+                continue
+            cls = "n hot" if s["open"] else "n zero"
+            inner = str(s["open"])
+            if s.get("url"):
+                inner = '<a href="%s">%s</a>' % (esc(s["url"]), s["open"])
+            cells.append(
+                '<td class="%s">%s<span class="of">of %s</span></td>'
+                % (cls, inner, s.get("total", "?"))
+            )
         name = esc(r["label"])
         if r.get("profile_url"):
             name = '<a href="%s">%s</a>' % (esc(r["profile_url"]), name)
         sub = "BIN %s" % esc(r["bin"]) if r.get("bin") else '<span class="err">not found on BIS</span>'
         if r.get("error"):
             sub = '<span class="err">%s</span>' % esc(r["error"][:120])
-        rows.append(
-            "<tr><td>%s<span class=\"sub\">%s</span></td>%s</tr>"
-            % (name, sub, "".join(counts))
-        )
+        rows.append('<tr><td>%s<span class="sub">%s</span></td>%s</tr>' % (name, sub, "".join(cells)))
 
     html = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -411,10 +390,9 @@ __BLOCKS__
 <table>
 <thead><tr><th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th></tr></thead>
 <tbody>__ROWS__</tbody></table>
-<footer>Counts are open records on file at the Buildings Information System.
-Click a count to open that BIS page. Checked hourly.</footer>
+<footer>Large number is open records. Small number is everything on file.
+Click a count to open that page on BIS. Checked hourly.</footer>
 </div></body></html>"""
-
     return (
         html.replace("__CSS__", DASHBOARD_CSS)
         .replace("__WHEN__", esc(checked_at))
@@ -431,7 +409,7 @@ Click a count to open that BIS page. Checked hourly.</footer>
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="check and print, send nothing")
-    ap.add_argument("--seed", action="store_true", help="save current state without alerting")
+    ap.add_argument("--seed", action="store_true", help="save current counts without alerting")
     args = ap.parse_args()
 
     buildings = json.loads(BUILDINGS_FILE.read_text())
@@ -448,34 +426,32 @@ def main():
         prev = state.get(sid, {})
         new_state[sid] = {}
 
-        by_section = {}
+        counts, moved = {}, False
         for sec in SECTIONS:
-            rows = r["sections"].get(sec, {}).get("rows", {})
-            err = r["sections"].get(sec, {}).get("error")
-            if err:
-                # keep the old snapshot so a fetch failure never fakes a "cleared" alert
-                new_state[sid][sec] = prev.get(sec, {})
+            s = r["sections"].get(sec, {})
+            was = prev.get(sec)
+            if s.get("error") or "open" not in s:
+                # a failed fetch keeps the old number, so an outage never fakes a drop
+                if was is not None:
+                    new_state[sid][sec] = was
+                    r["sections"].setdefault(sec, {})["open"] = was
+                    r["sections"][sec].setdefault("total", was)
+                    r["sections"][sec]["error"] = None
                 continue
-            new_state[sid][sec] = rows
-            d = diff_rows(prev.get(sec, {}), rows)
-            if d["added"] or d["changed"] or d["removed"]:
-                by_section[sec] = d
+            new_state[sid][sec] = s["open"]
+            counts[sec] = {"now": s["open"], "was": was}
+            if was is not None and s["open"] != was:
+                moved = True
 
-        if by_section and prev and not args.seed:
-            changes.append(
-                {
-                    "building": r["label"],
-                    "by_section": by_section,
-                    "urls": r.get("profile_url") or "",
-                }
-            )
+        if moved and not args.seed:
+            changes.append({"building": r["label"], "counts": counts, "url": r.get("profile_url")})
+
         print(
-            "%-38s BIN %-9s %s"
+            "%-34s BIN %-9s %s"
             % (
-                r["label"],
-                r["bin"] or "-",
-                " ".join(
-                    "%s=%d" % (s[:3], len(r["sections"].get(s, {}).get("rows", {})))
+                r["label"], r["bin"] or "-",
+                "  ".join(
+                    "%s %s open" % (SHORT_LABEL[s], r["sections"].get(s, {}).get("open", "?"))
                     for s in SECTIONS
                 ),
             )
@@ -489,22 +465,23 @@ def main():
 
     if changes and not args.dry_run and not args.seed:
         body = build_alert_text(changes, checked_at)
-        count = sum(
-            len(d["added"]) + len(d["changed"]) + len(d["removed"])
-            for c in changes
-            for d in c["by_section"].values()
+        head = changes[0]
+        first = next(
+            (SHORT_LABEL[s] for s in SECTIONS
+             if head["counts"].get(s) and head["counts"][s]["was"] is not None
+             and head["counts"][s]["now"] != head["counts"][s]["was"]),
+            "records",
         )
-        subject = "DOB watch: %d change%s (%s)" % (
-            count,
-            "" if count == 1 else "s",
-            ", ".join(c["building"] for c in changes)[:80],
+        subject = "DOB watch: %s open count moved at %s%s" % (
+            first, head["building"],
+            "" if len(changes) == 1 else " and %d more" % (len(changes) - 1),
         )
         send_email(subject, body)
         send_slack(subject + "\n```\n" + body + "\n```")
     elif changes:
         print("\n" + build_alert_text(changes, checked_at))
     else:
-        print("no changes")
+        print("no change in open counts")
 
     STATE_FILE.write_text(json.dumps(new_state, indent=1, sort_keys=True))
     return 0
