@@ -37,7 +37,8 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parent
 BUILDINGS_FILE = ROOT / "buildings.json"
 STATE_FILE = ROOT / "state.json"
-DASHBOARD_FILE = ROOT / "docs" / "index.html"
+DATA_FILE = ROOT / "docs" / "data.json"
+HISTORY_CAP = 500   # snapshots kept in data.json
 
 SECTIONS = ["complaints", "dob_violations", "ecb_violations"]
 SECTION_LABEL = {
@@ -367,118 +368,53 @@ def send_slack(text):
 # Dashboard
 # ----------------------------------------------------------------------
 
-def esc(s):
-    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
-            .replace(">", "&gt;").replace('"', "&quot;"))
+def write_data(results, checked_at, source, sids):
+    """Publish docs/data.json for the web page. Keeps a rolling history."""
+    old = {}
+    if DATA_FILE.exists():
+        try:
+            old = json.loads(DATA_FILE.read_text())
+        except Exception:  # noqa: BLE001
+            old = {}
+    history = old.get("history", [])
+    if not isinstance(history, list):
+        history = []
 
-
-DASHBOARD_CSS = """
-*,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:#101418;color:#E8E6E1;
- font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
-.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
-header{border-bottom:2px solid #E8E6E1;padding-bottom:14px;margin-bottom:28px;
- display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between}
-h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
-.stamp{font-size:13px;color:#8A9199}
-.headline{font-size:clamp(26px,4.5vw,38px);line-height:1.2;font-weight:600;
- letter-spacing:-.02em;margin:0 0 26px;max-width:22ch}
-.headline.quiet{color:#8A9199;font-weight:400}
-.moved{border-left:3px solid #E2564D;background:#171C21;padding:12px 16px;margin-bottom:10px;
- font-size:15px}
-.moved b{font-weight:600}
-.moved .delta{color:#E2564D;font-weight:600}
-.moved .delta.down{color:#5E9E7B}
-table{width:100%;border-collapse:collapse;margin-top:14px}
-th{text-align:left;font-size:12px;font-weight:600;color:#8A9199;
- padding:0 10px 8px 0;border-bottom:1px solid #2B333A}
-th.n,td.n{text-align:right;padding-right:14px}
-td{padding:12px 10px 12px 0;border-bottom:1px solid #1D2429;font-size:15px;vertical-align:top}
-td a{color:#E8E6E1;text-decoration:none;border-bottom:1px solid #3C444B}
-td a:hover,td a:focus{border-bottom-color:#E8E6E1}
-td.n{font-weight:600;font-size:19px}
-td.n.hot{color:#E2564D}
-td.n.zero{color:#5A6169}
-.of{display:block;font-size:11px;color:#6C737A;font-weight:400;margin-top:2px}
-.sub{display:block;font-size:12px;color:#7C838A;margin-top:3px}
-.err{color:#D9A441;font-size:13px}
-footer{margin-top:40px;font-size:13px;color:#6C737A;line-height:1.7}
-a:focus-visible{outline:2px solid #D9A441;outline-offset:3px}
-@media(max-width:620px){th.n,td.n{padding-right:6px}td.n{font-size:17px}}
-"""
-
-
-def render_dashboard(results, changes, checked_at, source):
-    total_open = sum(
-        s["open"] for r in results for s in r["sections"].values()
-        if isinstance(s.get("open"), int)
-    )
-    if changes:
-        head = '<p class="headline">%d open record%s. %d building%s moved.</p>' % (
-            total_open, "" if total_open == 1 else "s",
-            len(changes), "" if len(changes) == 1 else "s")
-    else:
-        head = '<p class="headline quiet">%d open record%s. Nothing moved.</p>' % (
-            total_open, "" if total_open == 1 else "s")
-
-    blocks = []
-    for c in changes:
-        bits = []
-        for sec in SECTIONS:
-            d = c["counts"].get(sec)
-            if not d or d["was"] is None or d["now"] == d["was"]:
-                continue
-            delta = d["now"] - d["was"]
-            bits.append('%s %d open <span class="%s">(%+d)</span>' % (
-                esc(SHORT_LABEL[sec]), d["now"],
-                "delta down" if delta < 0 else "delta", delta))
-        if bits:
-            blocks.append('<div class="moved"><b>%s</b>: %s</div>'
-                          % (esc(c["building"]), ", ".join(bits)))
-
-    rows = []
-    for r in results:
-        cells = []
+    buildings, snapshot = [], {}
+    for r, sid in zip(results, sids):
+        secs = {}
         for sec in SECTIONS:
             s = r["sections"].get(sec, {})
-            if not isinstance(s.get("open"), int):
-                cells.append('<td class="n err">!</td>')
-                continue
-            inner = str(s["open"])
-            if s.get("url"):
-                inner = '<a href="%s">%s</a>' % (esc(s["url"]), s["open"])
-            cells.append('<td class="%s">%s<span class="of">of %s</span></td>'
-                         % ("n hot" if s["open"] else "n zero", inner, s.get("total", "?")))
-        name = esc(r["label"])
-        if r.get("profile_url"):
-            name = '<a href="%s">%s</a>' % (esc(r["profile_url"]), name)
-        sub = "BIN %s" % esc(r["bin"]) if r.get("bin") else '<span class="err">no BIN</span>'
-        if r.get("error"):
-            sub = '<span class="err">%s</span>' % esc(r["error"][:140])
-        rows.append('<tr><td>%s<span class="sub">%s</span></td>%s</tr>'
-                    % (name, sub, "".join(cells)))
+            secs[sec] = {
+                "open": s["open"] if isinstance(s.get("open"), int) else None,
+                "total": s.get("total"),
+                "url": s.get("url"),
+                "error": s.get("error"),
+            }
+        buildings.append({
+            "id": sid,
+            "label": r["label"],
+            "bin": r["bin"],
+            "profile_url": r["profile_url"],
+            "error": r["error"],
+            "sections": secs,
+        })
+        snapshot[sid] = {sec: secs[sec]["open"] for sec in SECTIONS}
 
-    html = """<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOB watch</title>
-<style>__CSS__</style></head>
-<body><div class="wrap">
-<header><h1>DOB watch</h1><div class="stamp">Checked __WHEN__ via __SRC__</div></header>
-__HEAD__
-__BLOCKS__
-<table>
-<thead><tr><th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th></tr></thead>
-<tbody>__ROWS__</tbody></table>
-<footer>Large number is open records. Small number is everything on file.
-Click a count to open that page on BIS.</footer>
-</div></body></html>"""
-    return (html.replace("__CSS__", DASHBOARD_CSS)
-            .replace("__WHEN__", esc(checked_at))
-            .replace("__SRC__", "NYC Open Data" if source == "opendata" else "BIS")
-            .replace("__HEAD__", head)
-            .replace("__BLOCKS__", "".join(blocks))
-            .replace("__ROWS__", "".join(rows)))
+    history.append({"t": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    "counts": snapshot})
+    history = history[-HISTORY_CAP:]
+
+    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+    DATA_FILE.write_text(json.dumps({
+        "checked_at": checked_at,
+        "source": source,
+        "sections": SECTIONS,
+        "labels": SHORT_LABEL,
+        "buildings": buildings,
+        "history": history,
+    }, indent=1))
+    print("data written to %s (%d snapshots)" % (DATA_FILE, len(history)))
 
 
 # ----------------------------------------------------------------------
@@ -518,12 +454,13 @@ def main():
     checked_at = datetime.now(timezone.utc).astimezone().strftime("%b %d, %Y at %I:%M %p %Z")
 
     session = requests.Session()
-    results, changes, new_state = [], [], {}
+    results, changes, new_state, sids = [], [], {}, []
 
     for b in buildings:
         r = check_building(session, b, args.source)
         results.append(r)
         sid = "%s|%s|%s" % (b["boro"], b["houseno"], str(b["street"]).lower())
+        sids.append(sid)
         prev = state.get(sid, {})
         new_state[sid] = {}
 
@@ -556,9 +493,7 @@ def main():
             if e:
                 print("   %s: %s" % (SHORT_LABEL[sec], e))
 
-    DASHBOARD_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DASHBOARD_FILE.write_text(render_dashboard(results, changes, checked_at, args.source))
-    print("dashboard written to %s" % DASHBOARD_FILE)
+    write_data(results, checked_at, args.source, sids)
 
     if changes and not args.dry_run and not args.seed:
         body = build_alert_text(changes, checked_at, args.source)
