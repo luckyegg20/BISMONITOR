@@ -44,15 +44,15 @@ HISTORY_CAP = 500   # snapshots kept in data.json
 
 SECTIONS = ["complaints", "dob_violations", "ecb_violations"]
 SECTION_LABEL = {
-    "complaints": "Complaints filed (90d)",
+    "complaints": "Complaints filed (30d)",
     "dob_violations": "Violations - DOB",
     "ecb_violations": "Violations - OATH/ECB",
 }
-SHORT_LABEL = {"complaints": "Complaints (90d)", "dob_violations": "Violations-DOB",
+SHORT_LABEL = {"complaints": "Complaints (30d)", "dob_violations": "Violations-DOB",
                "ecb_violations": "Violations-OATH/ECB"}
 
 TIMEOUT = 40
-COMPLAINT_WINDOW_DAYS = 90   # complaints counted as "recently filed"
+COMPLAINT_WINDOW_DAYS = 30   # complaints counted as "recently filed"
 
 
 # ----------------------------------------------------------------------
@@ -628,7 +628,20 @@ def main():
                     help="list the records behind each open count, then stop")
     args = ap.parse_args()
 
-    buildings = json.loads(BUILDINGS_FILE.read_text())
+    try:
+        buildings = json.loads(BUILDINGS_FILE.read_text())
+    except json.JSONDecodeError as exc:
+        text = BUILDINGS_FILE.read_text().splitlines()
+        print("buildings.json has a syntax error: %s" % exc.msg)
+        lo, hi = max(0, exc.lineno - 3), min(len(text), exc.lineno + 1)
+        for i in range(lo, hi):
+            print("%s%4d | %s" % (">>" if i + 1 == exc.lineno else "  ",
+                                  i + 1, text[i]))
+        if "delimiter" in exc.msg:
+            print("\nUsually a missing comma at the end of the line above the "
+                  "marked one. Every field needs a trailing comma except the "
+                  "last one in its block.")
+        return 1
     state = load_state()
     checked_at = datetime.now(timezone.utc).astimezone().strftime("%b %d, %Y at %I:%M %p %Z")
 
