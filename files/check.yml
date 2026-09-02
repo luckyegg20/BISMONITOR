@@ -49,10 +49,27 @@ jobs:
             python monitor.py
           fi
 
-      - name: Save state and dashboard
+      - name: Show what was produced
+        if: always()
+        run: |
+          echo "--- files in docs/ ---"
+          ls -la docs/ || echo "NO docs FOLDER"
+          echo "--- repo root ---"
+          ls -la
+
+      - name: Save state and page data
         run: |
           git config user.name "dob-watch"
           git config user.email "dob-watch@users.noreply.github.com"
-          git add -A state.json docs
+          git add -A
+          echo "--- staged ---"
+          git diff --staged --name-only
           git diff --staged --quiet || git commit -m "check $(date -u +%Y-%m-%dT%H:%MZ)"
           git push
+          echo "pushed"
+
+      - name: Confirm data.json is committed
+        run: |
+          git ls-files docs/data.json | grep . \
+            && echo "OK data.json is tracked" \
+            || (echo "FAIL data.json is not in the repo" && exit 1)
