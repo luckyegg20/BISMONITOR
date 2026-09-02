@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: "0 * * * *"   # top of every hour, UTC
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "normal = check and alert. seed = record what is on file now, alert on nothing."
+        type: choice
+        required: true
+        default: normal
+        options: [normal, seed]
 
 permissions:
   contents: write
@@ -33,8 +40,14 @@ jobs:
           ALERT_TO: ${{ secrets.ALERT_TO }}
           ALERT_FROM: ${{ secrets.ALERT_FROM }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SOCRATA_TOKEN: ${{ secrets.SOCRATA_TOKEN }}
           TZ: America/New_York
-        run: python monitor.py
+        run: |
+          if [ "${{ inputs.mode }}" = "seed" ]; then
+            python monitor.py --seed
+          else
+            python monitor.py
+          fi
 
       - name: Save state and dashboard
         run: |
