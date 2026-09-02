@@ -67,8 +67,8 @@ DATASETS = {
 }
 
 BIS_LINKS = {
-    "complaints": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet"
-                  "?requestid=1&allbin=%s&allinquirytype=BXS3OCV3",
+    "complaints": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet"
+                  "?requestid=1&allbin=%s",
     "dob_violations": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet"
                       "?requestid=1&allbin=%s&allinquirytype=BXS4OCV3&stypeocv3=V",
     "ecb_violations": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet"
