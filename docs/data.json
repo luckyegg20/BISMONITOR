@@ -1,5 +1,5 @@
 {
- "checked_at": "Sep 02, 2026 at 04:34 PM EDT",
+ "checked_at": "Sep 02, 2026 at 04:54 PM EDT",
  "source": "opendata",
  "sections": [
   "complaints",
@@ -22,7 +22,7 @@
     "complaints": {
      "open": 0,
      "total": 33,
-     "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&allbin=1083696&allinquirytype=BXS3OCV3",
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083696",
      "error": null
     },
     "dob_violations": {
@@ -49,7 +49,7 @@
     "complaints": {
      "open": 1,
      "total": 25,
-     "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&allbin=1083698&allinquirytype=BXS3OCV3",
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083698",
      "error": null
     },
     "dob_violations": {
@@ -85,6 +85,21 @@
   },
   {
    "t": "2026-09-02T20:34:38+00:00",
+   "counts": {
+    "1|530|east 23rd street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 2,
+     "ecb_violations": 1
+    }
+   }
+  },
+  {
+   "t": "2026-09-02T20:54:54+00:00",
    "counts": {
     "1|530|east 23rd street": {
      "complaints": 0,
