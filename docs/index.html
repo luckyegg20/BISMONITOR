@@ -1,48 +1,285 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DOB watch</title>
 <style>
+:root{
+  --ink:#0E1216; --panel:#161B21; --line:#232B33; --line2:#2E3841;
+  --text:#E9E7E2; --dim:#8B939B; --faint:#666E76;
+  --hot:#E2564D; --cool:#5E9E7B; --warn:#D9A441;
+}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:#101418;color:#E8E6E1;
- font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
-.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
-header{border-bottom:2px solid #E8E6E1;padding-bottom:14px;margin-bottom:28px;
- display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between}
-h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
-.stamp{font-size:13px;color:#8A9199}
-.headline{font-size:clamp(26px,4.5vw,38px);line-height:1.2;font-weight:600;
- letter-spacing:-.02em;margin:0 0 26px;max-width:22ch}
-.headline.quiet{color:#8A9199;font-weight:400}
-.moved{border-left:3px solid #E2564D;background:#171C21;padding:12px 16px;margin-bottom:10px;
- font-size:15px}
-.moved b{font-weight:600}
-.moved .delta{color:#E2564D;font-weight:600}
-.moved .delta.down{color:#5E9E7B}
-table{width:100%;border-collapse:collapse;margin-top:14px}
-th{text-align:left;font-size:12px;font-weight:600;color:#8A9199;
- padding:0 10px 8px 0;border-bottom:1px solid #2B333A}
-th.n,td.n{text-align:right;padding-right:14px}
-td{padding:12px 10px 12px 0;border-bottom:1px solid #1D2429;font-size:15px;vertical-align:top}
-td a{color:#E8E6E1;text-decoration:none;border-bottom:1px solid #3C444B}
-td a:hover,td a:focus{border-bottom-color:#E8E6E1}
-td.n{font-weight:600;font-size:19px}
-td.n.hot{color:#E2564D}
-td.n.zero{color:#5A6169}
-.of{display:block;font-size:11px;color:#6C737A;font-weight:400;margin-top:2px}
-.sub{display:block;font-size:12px;color:#7C838A;margin-top:3px}
-.err{color:#D9A441;font-size:13px}
-footer{margin-top:40px;font-size:13px;color:#6C737A;line-height:1.7}
-a:focus-visible{outline:2px solid #D9A441;outline-offset:3px}
-@media(max-width:620px){th.n,td.n{padding-right:6px}td.n{font-size:17px}}
-</style></head>
-<body><div class="wrap">
-<header><h1>DOB watch</h1><div class="stamp">Checked Sep 02, 2026 at 03:30 PM EDT via NYC Open Data</div></header>
-<p class="headline quiet">6 open records. Nothing moved.</p>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--text);
+  font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-variant-numeric:tabular-nums}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 80px}
 
-<table>
-<thead><tr><th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th></tr></thead>
-<tbody><tr><td><a href="https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&amp;houseno=530&amp;street=east+23rd+street&amp;go2=+GO+&amp;requestid=0">530 East 23rd Street</a><span class="sub">BIN 1083696</span></td><td class="n zero"><a href="https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&amp;allbin=1083696&amp;allinquirytype=BXS3OCV3">0</a><span class="of">of 33</span></td><td class="n zero"><a href="https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&amp;allbin=1083696&amp;allinquirytype=BXS4OCV3&amp;stypeocv3=V">0</a><span class="of">of 11</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&amp;allbin=1083696">2</a><span class="of">of 7</span></td></tr><tr><td><a href="https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&amp;houseno=7&amp;street=peter+cooper+road&amp;go2=+GO+&amp;requestid=0">7 Peter Cooper Road</a><span class="sub">BIN 1083698</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&amp;allbin=1083698&amp;allinquirytype=BXS3OCV3">1</a><span class="of">of 25</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&amp;allbin=1083698&amp;allinquirytype=BXS4OCV3&amp;stypeocv3=V">2</a><span class="of">of 26</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&amp;allbin=1083698">1</a><span class="of">of 7</span></td></tr></tbody></table>
-<footer>Large number is open records. Small number is everything on file.
-Click a count to open that page on BIS.</footer>
-</div></body></html>
+header{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:baseline;
+  justify-content:space-between;border-bottom:2px solid var(--text);
+  padding-bottom:12px;margin-bottom:24px}
+h1{margin:0;font-size:21px;font-weight:600;letter-spacing:-.01em}
+.stamp{font-size:13px;color:var(--dim)}
+.stamp b{color:var(--text);font-weight:600}
+
+.headline{font-size:clamp(25px,4.6vw,36px);line-height:1.18;font-weight:600;
+  letter-spacing:-.02em;margin:0 0 8px;max-width:24ch}
+.headline.quiet{color:var(--dim);font-weight:400}
+.since{font-size:14px;color:var(--dim);margin:0 0 24px}
+
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+input[type=search],select{background:var(--panel);color:var(--text);
+  border:1px solid var(--line2);border-radius:2px;padding:8px 10px;
+  font:inherit;font-size:14px}
+input[type=search]{flex:1 1 200px;min-width:0}
+select{flex:0 0 auto}
+button{background:var(--panel);color:var(--text);border:1px solid var(--line2);
+  border-radius:2px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+button:hover{border-color:var(--text)}
+:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+
+table{width:100%;border-collapse:collapse;margin-top:14px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--dim);
+  padding:0 8px 8px 0;border-bottom:1px solid var(--line2);white-space:nowrap}
+th.n{text-align:right;padding-right:12px}
+tbody tr.b{border-bottom:1px solid var(--line);cursor:pointer}
+tbody tr.b:hover td,tbody tr.b.open td{background:#131920}
+td{padding:12px 8px 12px 0;font-size:15px;vertical-align:top}
+td.n{text-align:right;padding-right:12px;font-weight:600;font-size:20px}
+td.n.hot{color:var(--hot)}
+td.n.zero{color:var(--faint)}
+td.n.na{color:var(--warn)}
+.of{display:block;font-size:11px;color:var(--faint);font-weight:400;margin-top:1px}
+.delta{display:block;font-size:11px;font-weight:600;margin-top:1px;color:var(--hot)}
+.delta.down{color:var(--cool)}
+.name{font-weight:500}
+.sub{display:block;font-size:12px;color:var(--faint);margin-top:3px}
+.sub.err{color:var(--warn)}
+.chev{display:inline-block;width:14px;color:var(--faint);font-size:12px}
+
+tr.detail td{padding:0 0 18px;border-bottom:1px solid var(--line)}
+.panel{background:var(--panel);padding:16px}
+.panel h3{margin:0 0 2px;font-size:13px;font-weight:600;color:var(--dim)}
+.charts{display:flex;flex-wrap:wrap;gap:18px;margin-top:10px}
+.chart{flex:1 1 210px;min-width:180px}
+.chart .cap{font-size:12px;color:var(--dim);margin-bottom:4px}
+.chart .cap b{color:var(--text);font-size:15px;font-weight:600}
+svg{display:block;width:100%;height:56px;overflow:visible}
+.links{margin-top:14px;font-size:13px;display:flex;flex-wrap:wrap;gap:14px}
+.links a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--line2)}
+.links a:hover{border-bottom-color:var(--text)}
+.flat{font-size:13px;color:var(--faint);margin-top:10px}
+
+.msg{background:var(--panel);border-left:3px solid var(--warn);padding:14px 16px;
+  font-size:14px;line-height:1.6}
+.msg code{background:#0B0F13;padding:1px 5px;font-size:13px}
+footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
+@media(max-width:640px){
+  td.n{font-size:17px;padding-right:6px}
+  th.n{padding-right:6px}
+  td{font-size:14px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>DOB watch</h1>
+  <div class="stamp" id="stamp">Loading</div>
+</header>
+
+<div id="app">
+  <p class="headline quiet">Loading</p>
+</div>
+
+<footer>
+  Large number is open records. Small number is everything on file.
+  Click a building for its trend and links into BIS.
+</footer>
+</div>
+
+<script>
+const SEC = ["complaints","dob_violations","ecb_violations"];
+const NAME = {complaints:"Complaints", dob_violations:"DOB", ecb_violations:"OATH/ECB"};
+const app = document.getElementById("app");
+const stamp = document.getElementById("stamp");
+
+let DATA = null, expanded = null;
+const ui = {q:"", sort:"moved"};
+
+// data.json sits next to this page. ?src=<url> points somewhere else,
+// e.g. a raw.githubusercontent.com URL when you open this file locally.
+const src = new URLSearchParams(location.search).get("src") || "data.json";
+
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function prevCounts(){
+  const h = DATA.history || [];
+  return h.length > 1 ? h[h.length-2].counts || {} : {};
+}
+function seriesFor(id, sec){
+  return (DATA.history||[]).map(h => (h.counts?.[id]?.[sec] ?? null));
+}
+
+function openTotal(){
+  let n = 0;
+  for (const b of DATA.buildings)
+    for (const s of SEC) if (typeof b.sections[s]?.open === "number") n += b.sections[s].open;
+  return n;
+}
+
+function deltas(b){
+  const p = prevCounts()[b.id] || {};
+  const out = {};
+  for (const s of SEC){
+    const now = b.sections[s]?.open, was = p[s];
+    out[s] = (typeof now === "number" && typeof was === "number" && now !== was) ? now - was : 0;
+  }
+  return out;
+}
+
+function sparkline(vals){
+  const v = vals.filter(x => typeof x === "number");
+  if (v.length < 2) return '<p class="flat">Not enough history yet.</p>';
+  const w = 200, h = 46, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
+  const pts = v.map((y,i) => [i*(w/(v.length-1)), h - ((y-lo)/span)*(h-6) - 3]);
+  const d = pts.map((p,i) => (i?"L":"M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const last = pts[pts.length-1];
+  const rising = v[v.length-1] > v[0];
+  const col = rising ? "var(--hot)" : "var(--cool)";
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img"
+    aria-label="${v.length} readings, ${v[0]} to ${v[v.length-1]}">
+    <path d="${d}" fill="none" stroke="${col}" stroke-width="1.5"
+      vector-effect="non-scaling-stroke"/>
+    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.5" fill="${col}"/>
+  </svg>`;
+}
+
+function detailRow(b){
+  const charts = SEC.map(s => {
+    const v = b.sections[s];
+    const n = typeof v?.open === "number" ? v.open : "n/a";
+    return `<div class="chart"><div class="cap"><b>${n}</b> open ${esc(NAME[s])}</div>
+      ${sparkline(seriesFor(b.id, s))}</div>`;
+  }).join("");
+  const links = SEC.filter(s => b.sections[s]?.url)
+    .map(s => `<a href="${esc(b.sections[s].url)}" target="_blank" rel="noopener">${esc(NAME[s])} on BIS</a>`)
+    .join("");
+  const prof = b.profile_url
+    ? `<a href="${esc(b.profile_url)}" target="_blank" rel="noopener">Property profile</a>` : "";
+  const errs = SEC.filter(s => b.sections[s]?.error)
+    .map(s => `${NAME[s]}: ${b.sections[s].error}`).join(" / ");
+  return `<tr class="detail"><td colspan="4"><div class="panel">
+    <h3>${esc(b.label)}${b.bin ? " &middot; BIN " + esc(b.bin) : ""}</h3>
+    <div class="charts">${charts}</div>
+    ${errs ? `<p class="flat" style="color:var(--warn)">${esc(errs)}</p>` : ""}
+    <div class="links">${prof}${links}</div>
+  </div></td></tr>`;
+}
+
+function render(){
+  if (!DATA) return;
+  stamp.innerHTML = `Checked <b>${esc(DATA.checked_at)}</b> via ${DATA.source === "bis" ? "BIS" : "NYC Open Data"}`;
+
+  const movedList = DATA.buildings.filter(b => Object.values(deltas(b)).some(d => d !== 0));
+  const total = openTotal();
+  const head = movedList.length
+    ? `<p class="headline">${total} open record${total===1?"":"s"}. ${movedList.length} building${movedList.length===1?"":"s"} moved.</p>`
+    : `<p class="headline quiet">${total} open record${total===1?"":"s"}. Nothing moved.</p>`;
+  const since = (DATA.history||[]).length > 1
+    ? `<p class="since">Compared against the check before this one. ${DATA.history.length} readings on file.</p>`
+    : `<p class="since">First reading. Movement shows from the next check.</p>`;
+
+  const q = ui.q.trim().toLowerCase();
+  let rows = DATA.buildings.filter(b =>
+    !q || b.label.toLowerCase().includes(q) || String(b.bin||"").includes(q));
+
+  const openOf = (b,s) => typeof b.sections[s]?.open === "number" ? b.sections[s].open : -1;
+  const biggest = b => Math.max(...Object.values(deltas(b)).map(Math.abs));
+  const sorters = {
+    moved: (a,b) => biggest(b) - biggest(a) || a.label.localeCompare(b.label),
+    name:  (a,b) => a.label.localeCompare(b.label),
+    complaints: (a,b) => openOf(b,"complaints") - openOf(a,"complaints"),
+    dob_violations: (a,b) => openOf(b,"dob_violations") - openOf(a,"dob_violations"),
+    ecb_violations: (a,b) => openOf(b,"ecb_violations") - openOf(a,"ecb_violations"),
+  };
+  rows = rows.slice().sort(sorters[ui.sort] || sorters.name);
+
+  const body = rows.map(b => {
+    const d = deltas(b);
+    const cells = SEC.map(s => {
+      const v = b.sections[s];
+      if (typeof v?.open !== "number") return `<td class="n na">n/a</td>`;
+      const dd = d[s]
+        ? `<span class="delta${d[s]<0?" down":""}">${d[s]>0?"+":""}${d[s]}</span>` : "";
+      return `<td class="n ${v.open?"hot":"zero"}">${v.open}
+        <span class="of">of ${v.total ?? "?"}</span>${dd}</td>`;
+    }).join("");
+    const sub = b.error
+      ? `<span class="sub err">${esc(b.error)}</span>`
+      : `<span class="sub">${b.bin ? "BIN "+esc(b.bin) : "no BIN"}</span>`;
+    const isOpen = expanded === b.id;
+    return `<tr class="b${isOpen?" open":""}" data-id="${esc(b.id)}" tabindex="0"
+        aria-expanded="${isOpen}">
+      <td><span class="chev">${isOpen?"&#9662;":"&#9656;"}</span><span class="name">${esc(b.label)}</span>${sub}</td>
+      ${cells}</tr>` + (isOpen ? detailRow(b) : "");
+  }).join("");
+
+  app.innerHTML = head + since + `
+  <div class="controls">
+    <input type="search" id="q" placeholder="Filter by address or BIN" value="${esc(ui.q)}">
+    <select id="sort">
+      <option value="moved">Sort: recent movement</option>
+      <option value="name">Sort: address</option>
+      <option value="complaints">Sort: open complaints</option>
+      <option value="dob_violations">Sort: open DOB</option>
+      <option value="ecb_violations">Sort: open OATH/ECB</option>
+    </select>
+    <button id="reload">Reload</button>
+  </div>
+  <table><thead><tr>
+    <th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th>
+  </tr></thead><tbody>${body || `<tr><td colspan="4" class="flat">No building matches that filter.</td></tr>`}</tbody></table>`;
+
+  const qs = document.getElementById("q");
+  qs.addEventListener("input", e => { ui.q = e.target.value; render();
+    const n = document.getElementById("q"); n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
+  const sel = document.getElementById("sort");
+  sel.value = ui.sort;
+  sel.addEventListener("change", e => { ui.sort = e.target.value; render(); });
+  document.getElementById("reload").addEventListener("click", load);
+
+  app.querySelectorAll("tr.b").forEach(tr => {
+    const toggle = () => { expanded = expanded === tr.dataset.id ? null : tr.dataset.id; render(); };
+    tr.addEventListener("click", toggle);
+    tr.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+    });
+  });
+}
+
+async function load(){
+  try {
+    const r = await fetch(src + (src.includes("?") ? "&" : "?") + "t=" + Date.now(),
+                          {cache:"no-store"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    DATA = await r.json();
+    render();
+  } catch (err) {
+    stamp.textContent = "No data";
+    app.innerHTML = `<p class="headline quiet">No results yet.</p>
+      <div class="msg">Could not read <code>${esc(src)}</code>: ${esc(err.message)}.<br><br>
+      This page reads <code>data.json</code> from the same folder. Run the checker once
+      so it publishes that file, then reload.<br><br>
+      Opening this file straight off your desktop? Browsers block local file reads.
+      Either use the GitHub Pages URL, or append
+      <code>?src=</code> and a raw.githubusercontent.com link to data.json.</div>`;
+  }
+}
+load();
+</script>
+</body>
+</html>
