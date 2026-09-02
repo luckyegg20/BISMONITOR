@@ -38,6 +38,8 @@ ROOT = Path(__file__).resolve().parent
 BUILDINGS_FILE = ROOT / "buildings.json"
 STATE_FILE = ROOT / "state.json"
 DATA_FILE = ROOT / "docs" / "data.json"
+PAGE_FILE = ROOT / "docs" / "index.html"
+REPORT_FILE = ROOT / "docs" / "report.html"
 HISTORY_CAP = 500   # snapshots kept in data.json
 
 SECTIONS = ["complaints", "dob_violations", "ecb_violations"]
@@ -123,6 +125,41 @@ def count_opendata(session, bin_number):
             entry["error"] = str(exc)[:160]
         out[sec] = entry
     return out
+
+
+SHOW_FIELDS = {
+    "complaints": ["complaint_number", "date_entered", "status", "complaint_category",
+                   "disposition_date", "disposition_code", "inspection_date"],
+    "dob_violations": ["number", "violation_number", "issue_date", "violation_category",
+                       "violation_type", "disposition_date", "disposition_comments"],
+    "ecb_violations": ["ecb_violation_number", "issue_date", "ecb_violation_status",
+                       "severity", "hearing_status", "violation_type"],
+}
+
+
+def explain(session, bin_number, label):
+    """Print the records behind each open count so you can compare against BIS."""
+    b = str(bin_number).strip()
+    print("\n=== %s  BIN %s ===" % (label, b))
+    for sec, (dataset, field, open_word) in DATASETS.items():
+        where = "bin='%s' AND upper(%s) like '%%%s%%'" % (b, field, open_word)
+        print("\n%s  counted open  [%s]" % (SECTION_LABEL[sec], dataset))
+        try:
+            rows = soda(session, dataset, {"$where": where, "$limit": 25})
+        except Exception as exc:  # noqa: BLE001
+            print("  query failed: %s" % exc)
+            continue
+        if not rows:
+            print("  none")
+            continue
+        for row in rows:
+            bits = ["%s=%s" % (k, row[k]) for k in SHOW_FIELDS[sec] if row.get(k)]
+            extra = [k for k in row if k not in SHOW_FIELDS[sec]
+                     and k in ("bin", "house_number", "street", "boro", "block", "lot")]
+            bits += ["%s=%s" % (k, row[k]) for k in extra]
+            print("  " + "  ".join(bits))
+        if len(rows) == 25:
+            print("  (first 25 shown)")
 
 
 def resolve_bin(session, building):
@@ -416,6 +453,21 @@ def write_data(results, checked_at, source, sids):
     }, indent=1))
     print("data written to %s (%d snapshots)" % (DATA_FILE, len(history)))
 
+    # A single self-contained file with the data baked in. Download it from the
+    # repo and open it anywhere, no web server and no GitHub Pages needed.
+    if PAGE_FILE.exists():
+        page = PAGE_FILE.read_text()
+        marker = "let EMBEDDED = null;"
+        if marker in page:
+            payload = json.dumps(json.loads(DATA_FILE.read_text()))
+            REPORT_FILE.write_text(page.replace(marker, "let EMBEDDED = " + payload + ";"))
+            print("self-contained page written to %s" % REPORT_FILE)
+        else:
+            print("skipped report.html: docs/index.html is an older version "
+                  "with no '%s' line. Replace it to get the offline page." % marker)
+    else:
+        print("skipped report.html: docs/index.html not found in the repo")
+
 
 # ----------------------------------------------------------------------
 # Main
@@ -447,6 +499,8 @@ def main():
                     default=os.environ.get("SOURCE", "opendata"))
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--seed", action="store_true")
+    ap.add_argument("--explain", action="store_true",
+                    help="list the records behind each open count, then stop")
     args = ap.parse_args()
 
     buildings = json.loads(BUILDINGS_FILE.read_text())
@@ -454,6 +508,17 @@ def main():
     checked_at = datetime.now(timezone.utc).astimezone().strftime("%b %d, %Y at %I:%M %p %Z")
 
     session = requests.Session()
+
+    if args.explain:
+        for b in buildings:
+            bin_number = b.get("bin") or resolve_bin(session, b)
+            if not bin_number:
+                print("\n=== %s === no BIN found" % b.get("label", b["houseno"]))
+                continue
+            explain(session, bin_number,
+                    b.get("label") or "%s %s" % (b["houseno"], b["street"]))
+        return 0
+
     results, changes, new_state, sids = [], [], {}, []
 
     for b in buildings:

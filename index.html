@@ -42,8 +42,9 @@ button:hover{border-color:var(--text)}
 
 table{width:100%;border-collapse:collapse;margin-top:14px}
 th{text-align:left;font-size:12px;font-weight:600;color:var(--dim);
-  padding:0 8px 8px 0;border-bottom:1px solid var(--line2);white-space:nowrap}
-th.n{text-align:right;padding-right:12px}
+  padding:0 8px 8px 0;border-bottom:1px solid var(--line2);white-space:nowrap;
+  vertical-align:bottom}
+th.n{text-align:right;padding-right:12px;white-space:normal;max-width:96px}
 tbody tr.b{border-bottom:1px solid var(--line);cursor:pointer}
 tbody tr.b:hover td,tbody tr.b.open td{background:#131920}
 td{padding:12px 8px 12px 0;font-size:15px;vertical-align:top}
@@ -103,10 +104,11 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 
 <script>
 const SEC = ["complaints","dob_violations","ecb_violations"];
-const NAME = {complaints:"Complaints", dob_violations:"DOB", ecb_violations:"OATH/ECB"};
+const NAME = {complaints:"Complaints", dob_violations:"Violations-DOB", ecb_violations:"Violations-OATH/ECB"};
 const app = document.getElementById("app");
 const stamp = document.getElementById("stamp");
 
+let EMBEDDED = null;
 let DATA = null, expanded = null;
 const ui = {q:"", sort:"moved"};
 
@@ -235,13 +237,13 @@ function render(){
       <option value="moved">Sort: recent movement</option>
       <option value="name">Sort: address</option>
       <option value="complaints">Sort: open complaints</option>
-      <option value="dob_violations">Sort: open DOB</option>
-      <option value="ecb_violations">Sort: open OATH/ECB</option>
+      <option value="dob_violations">Sort: open Violations-DOB</option>
+      <option value="ecb_violations">Sort: open Violations-OATH/ECB</option>
     </select>
     <button id="reload">Reload</button>
   </div>
   <table><thead><tr>
-    <th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th>
+    <th>Building</th><th class="n">Complaints</th><th class="n">Violations-DOB</th><th class="n">Violations-OATH/ECB</th>
   </tr></thead><tbody>${body || `<tr><td colspan="4" class="flat">No building matches that filter.</td></tr>`}</tbody></table>`;
 
   const qs = document.getElementById("q");
@@ -262,6 +264,7 @@ function render(){
 }
 
 async function load(){
+  if (EMBEDDED) { DATA = EMBEDDED; render(); return; }
   try {
     const r = await fetch(src + (src.includes("?") ? "&" : "?") + "t=" + Date.now(),
                           {cache:"no-store"});
