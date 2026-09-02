@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "normal = check and alert. seed = record what is on file now, alert on nothing."
+        description: "normal = check and alert. seed = record counts, no alert. explain = list the records behind each count."
         type: choice
         required: true
         default: normal
-        options: [normal, seed]
+        options: [normal, seed, explain]
 
 permissions:
   contents: write
@@ -45,6 +45,8 @@ jobs:
         run: |
           if [ "${{ inputs.mode }}" = "seed" ]; then
             python monitor.py --seed
+          elif [ "${{ inputs.mode }}" = "explain" ]; then
+            python monitor.py --explain
           else
             python monitor.py
           fi
