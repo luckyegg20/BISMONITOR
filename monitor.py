@@ -94,11 +94,17 @@ def soda(session, dataset, params):
             if r.status_code == 429:
                 time.sleep(6)
                 continue
+            # 400/403/404 mean the query is wrong, not that the server is busy.
+            # Retrying cannot help, so fail immediately.
+            if 400 <= r.status_code < 500:
+                raise RuntimeError("HTTP %d on %s" % (r.status_code, dataset))
             r.raise_for_status()
             return r.json()
+        except RuntimeError:
+            raise
         except Exception as exc:  # noqa: BLE001
             last = exc
-            time.sleep(3 * (i + 1))
+            time.sleep(2 * (i + 1))
     raise RuntimeError("Open Data request failed: %s (%s)" % (dataset, last))
 
 
@@ -114,20 +120,20 @@ def count_opendata(session, bin_number):
     for sec, (dataset, field, open_word) in DATASETS.items():
         entry = {"url": BIS_LINKS[sec] % b}
         try:
-            # bin is text in these datasets; fall back to numeric if that returns nothing
             where = "bin='%s'" % b
-            total = soda_count(session, dataset, where)
-            if total == 0:
-                alt = "bin=%s" % b
-                if soda_count(session, dataset, alt) > 0:
-                    where = alt
-                    total = soda_count(session, dataset, where)
             if sec == "complaints":
                 ids, on_file = recent_complaints(session, where)
                 entry.update({"open": len(ids), "total": on_file,
                               "ids": ids, "error": None})
                 out[sec] = entry
                 continue
+            # bin is text in these datasets; fall back to numeric if that returns nothing
+            total = soda_count(session, dataset, where)
+            if total == 0:
+                alt = "bin=%s" % b
+                if soda_count(session, dataset, alt) > 0:
+                    where = alt
+                    total = soda_count(session, dataset, where)
             pre = OPEN_DATASET.get(sec)
             if pre:
                 opened = soda_count(session, pre, where)
@@ -440,7 +446,10 @@ def check_building(session, building, source):
             if not result["bin"]:
                 result["bin"] = resolve_bin(session, building)
                 if result["bin"]:
-                    print("   resolved BIN %s, add it to buildings.json" % result["bin"])
+                    building["bin"] = result["bin"]
+                    result["bin_learned"] = True
+                    print("   resolved BIN %s, saving it to buildings.json"
+                          % result["bin"])
             if not result["bin"]:
                 raise RuntimeError(
                     "no BIN found by address. Open the profile link on the "
@@ -708,6 +717,11 @@ def main():
             e = r["sections"].get(sec, {}).get("error")
             if e:
                 print("   %s: %s" % (SHORT_LABEL[sec], e))
+
+    learned = sum(1 for r in results if r.get("bin_learned"))
+    if learned:
+        BUILDINGS_FILE.write_text(json.dumps(buildings, indent=2) + "\n")
+        print("buildings.json updated with %d newly resolved BIN(s)" % learned)
 
     write_data(results, checked_at, args.source, sids)
 
