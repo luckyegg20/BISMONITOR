@@ -1,15 +1,18 @@
 # DOB watch
 
 Hourly check of NYC DOB BIS for Complaints, DOB Violations, and OATH/ECB Violations
-on a list of buildings. Sends email or Slack when a record appears, changes status,
-or drops off. Writes a one-page dashboard.
+on a list of buildings. Reports how many are open. Emails you when an open count
+moves. Writes a one-page dashboard.
 
 ## What it does per building
 
 1. Submits the Search by Property form: borough, house number, street.
 2. Reads the BIN off the Property Profile Overview.
 3. Opens the three record pages linked from that profile.
-4. Compares every row to the previous run and reports the difference.
+4. Counts the open records on each, and compares against the previous run.
+
+You get three numbers per building: open complaints, open DOB violations, open
+OATH/ECB violations. Nothing is sent unless one of those numbers moves.
 
 ## Files
 
@@ -38,11 +41,16 @@ Large complexes span several BINs. Add one entry per address you check by hand.
 
 ## First run
 
+If you are running this on GitHub, do the first run from the Actions tab: pick the
+DOB watch workflow, click Run workflow, and set mode to `seed`. No local install.
+
+To run it on your own machine instead:
+
     pip install -r requirements.txt
     python monitor.py --seed
 
-`--seed` records what is on file today so your first real check does not alert on
-1,400 existing records. Every run after that reports only differences.
+`--seed` records today's counts so your first real check has something to compare
+against. Every run after that reports only movement.
 
     python monitor.py --dry-run    check and print, send nothing
     python monitor.py              check, alert, save
@@ -83,8 +91,11 @@ Windows Task Scheduler works the same way: hourly trigger, action `python monito
   refreshes daily, so hourly polling there buys you nothing.
 - The script waits 2 seconds between requests. One building is 4 requests per hour.
   Keep the list under about 40 buildings and the load stays trivial.
+- Open versus closed is read off the status wording on each row: CLOSED, RESOLVED,
+  and DISMISSED count as closed, and a dismissed DOB violation number carries an
+  asterisk (V*7052-18P). A row with no status wording either way counts as open, so
+  the number errs high rather than missing something.
 - Row parsing reads any table row with 3 or more cells and a date or record number
   in it. If BIS changes its markup, counts go to zero rather than throwing. Watch
   for a building showing 0 across all three columns when you know it has records.
-- A failed fetch reuses the previous snapshot, so a BIS outage never fires a false
-  "record cleared" alert.
+- A failed fetch reuses the previous count, so a BIS outage never fires a false drop.
