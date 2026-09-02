@@ -26,7 +26,7 @@ import re
 import smtplib
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from pathlib import Path
 from urllib.parse import urlencode, urljoin
@@ -44,13 +44,15 @@ HISTORY_CAP = 500   # snapshots kept in data.json
 
 SECTIONS = ["complaints", "dob_violations", "ecb_violations"]
 SECTION_LABEL = {
-    "complaints": "Complaints",
+    "complaints": "Complaints filed (90d)",
     "dob_violations": "Violations - DOB",
     "ecb_violations": "Violations - OATH/ECB",
 }
-SHORT_LABEL = {"complaints": "Complaints", "dob_violations": "DOB", "ecb_violations": "OATH/ECB"}
+SHORT_LABEL = {"complaints": "Complaints (90d)", "dob_violations": "Violations-DOB",
+               "ecb_violations": "Violations-OATH/ECB"}
 
 TIMEOUT = 40
+COMPLAINT_WINDOW_DAYS = 90   # complaints counted as "recently filed"
 
 
 # ----------------------------------------------------------------------
@@ -120,6 +122,12 @@ def count_opendata(session, bin_number):
                 if soda_count(session, dataset, alt) > 0:
                     where = alt
                     total = soda_count(session, dataset, where)
+            if sec == "complaints":
+                ids, on_file = recent_complaints(session, where)
+                entry.update({"open": len(ids), "total": on_file,
+                              "ids": ids, "error": None})
+                out[sec] = entry
+                continue
             pre = OPEN_DATASET.get(sec)
             if pre:
                 opened = soda_count(session, pre, where)
@@ -170,16 +178,73 @@ def explain(session, bin_number, label):
             print("  (first 25 shown)")
 
 
+def parse_date(v):
+    """BIS exports use several date shapes. Return a date, or None."""
+    s = str(v or "").strip()
+    for fmt in ("%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d",
+                "%Y%m%d", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(s[:26] if "." in s else s, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def recent_complaints(session, bin_where):
+    """
+    Complaint numbers filed in the last COMPLAINT_WINDOW_DAYS.
+
+    The complaints dataset does not publish disposition codes, so its status
+    field lags BIS and cannot be trusted for "open". Filing dates never lag,
+    so this counts what was filed instead of what is still open.
+    Returns (ids, total_on_file).
+    """
+    rows = soda(session, "eabe-havv",
+                {"$select": "complaint_number,date_entered", "$where": bin_where,
+                 "$limit": 5000})
+    cutoff = (datetime.now(timezone.utc).date()
+              - timedelta(days=COMPLAINT_WINDOW_DAYS))
+    ids = []
+    for r in rows:
+        d = parse_date(r.get("date_entered"))
+        if d and d >= cutoff:
+            num = str(r.get("complaint_number") or "").strip()
+            if num:
+                ids.append(num)
+    return sorted(set(ids)), len(rows)
+
+
+# Address -> BIN. Tried in order; a building only appears in a dataset if it has
+# records there, so a clean building needs several attempts. (dataset, house field,
+# street field, borough field, borough value)
+BIN_SOURCES = [
+    ("3h2n-5cm9", "house_number", "street", "boro", "1"),
+    ("6bgk-3dad", "house_number", "street", "boro", "1"),
+    ("eabe-havv", "house_number", "house_street", "boro", "1"),
+    ("ic3t-wcy2", "house__", "street_name", "borough", "MANHATTAN"),
+    ("w9ak-ipjd", "house_no", "street_name", "borough", "MANHATTAN"),
+]
+BOROUGH_NAME = {1: "MANHATTAN", 2: "BRONX", 3: "BROOKLYN", 4: "QUEENS",
+                5: "STATEN ISLAND"}
+
+
 def resolve_bin(session, building):
-    """Look up a BIN from house number + street using the DOB Violations dataset."""
-    house = str(building["houseno"]).strip().upper()
-    street = str(building["street"]).strip().upper()
-    where = (
-        "upper(house_number)='%s' AND upper(street) like '%%%s%%' AND boro='%s'"
-        % (house.replace("'", ""), street.replace("'", ""), building["boro"])
-    )
-    rows = soda(session, "3h2n-5cm9", {"$select": "bin", "$where": where, "$limit": 1})
-    return rows[0]["bin"] if rows else None
+    """Look up a BIN from house number + street, trying several datasets."""
+    house = str(building["houseno"]).strip().upper().replace("'", "")
+    street = str(building["street"]).strip().upper().replace("'", "")
+    boro = int(building["boro"])
+    for dataset, hf, sf, bf, bval in BIN_SOURCES:
+        val = BOROUGH_NAME.get(boro, bval) if not bval.isdigit() else str(boro)
+        where = ("upper(%s)='%s' AND upper(%s) like '%%%s%%' AND upper(%s)='%s'"
+                 % (hf, house, sf, street, bf, val))
+        try:
+            rows = soda(session, dataset,
+                        {"$select": "bin", "$where": where, "$limit": 1})
+        except Exception:  # noqa: BLE001
+            continue          # wrong field names for this dataset, try the next
+        if rows and str(rows[0].get("bin") or "").strip("0 "):
+            return str(rows[0]["bin"]).strip()
+    return None
 
 
 # ----------------------------------------------------------------------
@@ -377,7 +442,10 @@ def check_building(session, building, source):
                 if result["bin"]:
                     print("   resolved BIN %s, add it to buildings.json" % result["bin"])
             if not result["bin"]:
-                raise RuntimeError("no BIN. Add \"bin\": \"1234567\" to this building.")
+                raise RuntimeError(
+                    "no BIN found by address. Open the profile link on the "
+                    "dashboard, copy the BIN, and add \"bin\": \"1234567\" "
+                    "to this building in buildings.json.")
             result["sections"] = count_opendata(session, result["bin"])
             result["profile_url"] = (
                 "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?"
@@ -395,6 +463,9 @@ def check_building(session, building, source):
 # Alerts
 # ----------------------------------------------------------------------
 
+NOUN = {"complaints": "filed", "dob_violations": "open", "ecb_violations": "open"}
+
+
 def build_alert_text(changes, checked_at, source):
     lines = ["NYC DOB open-record check - %s (%s)" % (checked_at, source), ""]
     for c in changes:
@@ -404,12 +475,15 @@ def build_alert_text(changes, checked_at, source):
             if not d:
                 continue
             if d["was"] is None:
-                lines.append("  %-22s %4d open" % (SECTION_LABEL[sec], d["now"]))
+                lines.append("  %-22s %4d %s" % (SECTION_LABEL[sec], d["now"], NOUN[sec]))
             elif d["now"] != d["was"]:
-                lines.append("  %-22s %4d open   was %d   %+d"
-                             % (SECTION_LABEL[sec], d["now"], d["was"], d["now"] - d["was"]))
+                lines.append("  %-22s %4d %-5s was %d   %+d"
+                             % (SECTION_LABEL[sec], d["now"], NOUN[sec],
+                                d["was"], d["now"] - d["was"]))
             else:
-                lines.append("  %-22s %4d open   no change" % (SECTION_LABEL[sec], d["now"]))
+                lines.append("  %-22s %4d %-5s no change" % (SECTION_LABEL[sec], d["now"], NOUN[sec]))
+        for num in c.get("new_complaints") or []:
+            lines.append("  NEW COMPLAINT  %s" % num)
         if c.get("url"):
             lines.append("  " + c["url"])
         lines.append("")
@@ -534,6 +608,9 @@ def load_state():
         if not isinstance(secs, dict):
             continue
         keep = {k: v for k, v in secs.items() if k in SECTIONS and isinstance(v, int)}
+        ids = secs.get("complaint_ids")
+        if isinstance(ids, list) and all(isinstance(x, str) for x in ids):
+            keep["complaint_ids"] = ids
         if keep:
             clean[sid] = keep
     if clean != raw:
@@ -578,6 +655,18 @@ def main():
         new_state[sid] = {}
 
         counts, moved = {}, False
+        new_ids = []
+        cur_ids = r["sections"].get("complaints", {}).get("ids")
+        if isinstance(cur_ids, list):
+            new_state[sid]["complaint_ids"] = cur_ids
+            old_ids = prev.get("complaint_ids")
+            if isinstance(old_ids, list):
+                new_ids = [i for i in cur_ids if i not in set(old_ids)]
+                if new_ids:
+                    moved = True
+        elif isinstance(prev.get("complaint_ids"), list):
+            new_state[sid]["complaint_ids"] = prev["complaint_ids"]
+
         for sec in SECTIONS:
             s = r["sections"].get(sec, {})
             was = prev.get(sec)
@@ -593,6 +682,7 @@ def main():
 
         if moved and not args.seed:
             changes.append({"building": r["label"], "counts": counts,
+                            "new_complaints": new_ids,
                             "url": r.get("profile_url")})
 
         print("%-32s BIN %-9s %s" % (
@@ -611,6 +701,15 @@ def main():
     if changes and not args.dry_run and not args.seed:
         body = build_alert_text(changes, checked_at, args.source)
         head = changes[0]
+        if head.get("new_complaints"):
+            n = len(head["new_complaints"])
+            subject = "DOB watch: %d new complaint%s at %s%s" % (
+                n, "" if n == 1 else "s", head["building"],
+                "" if len(changes) == 1 else " and %d more" % (len(changes) - 1))
+            send_email(subject, body)
+            send_slack(subject + "\n```\n" + body + "\n```")
+            STATE_FILE.write_text(json.dumps(new_state, indent=1, sort_keys=True))
+            return 0
         first = next((SHORT_LABEL[s] for s in SECTIONS
                       if head["counts"].get(s) and head["counts"][s]["was"] is not None
                       and head["counts"][s]["now"] != head["counts"][s]["was"]), "records")
