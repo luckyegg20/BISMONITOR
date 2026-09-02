@@ -62,9 +62,13 @@ SODA = "https://data.cityofnewyork.us/resource/%s.json"
 # dataset id, status field, wording that means the record is still open
 DATASETS = {
     "complaints":     ("eabe-havv", "status", "ACTIVE"),
-    "dob_violations": ("3h2n-5cm9", "violation_category", "ACTIVE"),
+    "dob_violations": ("3h2n-5cm9", "violation_category", "ACTIVE"),  # open count uses OPEN_DATASET
     "ecb_violations": ("6bgk-3dad", "ecb_violation_status", "ACTIVE"),
 }
+
+# Where DOB publishes an already-filtered open list. Trust DOB's own filter over
+# reading a status string, which lags BIS.
+OPEN_DATASET = {"dob_violations": "sjhj-bc8q"}
 
 BIS_LINKS = {
     "complaints": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet"
@@ -116,10 +120,14 @@ def count_opendata(session, bin_number):
                 if soda_count(session, dataset, alt) > 0:
                     where = alt
                     total = soda_count(session, dataset, where)
-            opened = soda_count(
-                session, dataset,
-                "%s AND upper(%s) like '%%%s%%'" % (where, field, open_word),
-            )
+            pre = OPEN_DATASET.get(sec)
+            if pre:
+                opened = soda_count(session, pre, where)
+            else:
+                opened = soda_count(
+                    session, dataset,
+                    "%s AND upper(%s) like '%%%s%%'" % (where, field, open_word),
+                )
             entry.update({"open": opened, "total": total, "error": None})
         except Exception as exc:  # noqa: BLE001
             entry["error"] = str(exc)[:160]
@@ -279,6 +287,38 @@ def find_section_links(html, base_url):
     return found
 
 
+PROFILE_ROW = {
+    "complaints": re.compile(r"^complaints?$", re.I),
+    "dob_violations": re.compile(r"violations?\s*[-\u2013]?\s*dob", re.I),
+    "ecb_violations": re.compile(r"violations?\s*[-\u2013]?\s*(oath|ecb)", re.I),
+}
+
+
+def profile_summary(html):
+    """
+    Read the Total / Open table on the BIS Property Profile Overview.
+
+    That table is what DOB itself shows, so it beats counting rows on the
+    detail pages. Returns {section: (open, total)} for whatever it finds.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    out = {}
+    for tr in soup.find_all("tr"):
+        cells = [" ".join(td.get_text(" ", strip=True).split()) for td in tr.find_all(["td", "th"])]
+        cells = [c for c in cells if c]
+        if len(cells) < 3:
+            continue
+        nums = [c for c in cells[1:] if re.fullmatch(r"[\d,]+", c)]
+        if len(nums) < 2:
+            continue
+        for sec, pat in PROFILE_ROW.items():
+            if sec not in out and pat.search(cells[0]):
+                total = int(nums[0].replace(",", ""))
+                opened = int(nums[1].replace(",", ""))
+                out[sec] = (opened, total)
+    return out
+
+
 def count_bis(session, building):
     params = {
         "boro": str(building["boro"]), "houseno": str(building["houseno"]),
@@ -292,9 +332,17 @@ def count_bis(session, building):
         for sec, tmpl in BIS_LINKS.items():
             links.setdefault(sec, tmpl % bin_number)
 
+    summary = profile_summary(html)
+    if summary:
+        print("   read Total/Open off the property profile")
+
     out = {}
     for sec in SECTIONS:
         link = links.get(sec)
+        if sec in summary:
+            opened, total = summary[sec]
+            out[sec] = {"url": link, "open": opened, "total": total, "error": None}
+            continue
         if not link:
             out[sec] = {"url": None, "error": "link not found"}
             continue
