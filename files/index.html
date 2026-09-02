@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOB Watch by JL</title>
+<title>DOB watch</title>
 <style>
 :root{
   --ink:#0E1216; --panel:#161B21; --line:#232B33; --line2:#2E3841;
@@ -97,7 +97,7 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 </div>
 
 <footer>
-  Complaints column counts filings in the last 90 days; the other two count open records.
+  Complaints column counts filings in the last 30 days; the other two count open records.
   Small number is everything on file.
   Click a building for its trend and links into BIS.
 </footer>
@@ -105,8 +105,8 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 
 <script>
 const SEC = ["complaints","dob_violations","ecb_violations"];
-const NAME = {complaints:"Complaints (90d)", dob_violations:"Violations-DOB", ecb_violations:"Violations-OATH/ECB"};
-const VERB = {complaints:"filed in last 90 days", dob_violations:"open", ecb_violations:"open"};
+const NAME = {complaints:"Complaints (30d)", dob_violations:"Violations-DOB", ecb_violations:"Violations-OATH/ECB"};
+const VERB = {complaints:"filed in last 30 days", dob_violations:"open", ecb_violations:"open"};
 const app = document.getElementById("app");
 const stamp = document.getElementById("stamp");
 
@@ -245,7 +245,7 @@ function render(){
     <button id="reload">Reload</button>
   </div>
   <table><thead><tr>
-    <th>Building</th><th class="n">Complaints (90d)</th><th class="n">Violations-DOB</th><th class="n">Violations-OATH/ECB</th>
+    <th>Building</th><th class="n">Complaints (30d)</th><th class="n">Violations-DOB</th><th class="n">Violations-OATH/ECB</th>
   </tr></thead><tbody>${body || `<tr><td colspan="4" class="flat">No building matches that filter.</td></tr>`}</tbody></table>`;
 
   const qs = document.getElementById("q");
