@@ -214,16 +214,37 @@ def recent_complaints(session, bin_where):
     return sorted(set(ids)), len(rows)
 
 
+# Address -> BIN. Tried in order; a building only appears in a dataset if it has
+# records there, so a clean building needs several attempts. (dataset, house field,
+# street field, borough field, borough value)
+BIN_SOURCES = [
+    ("3h2n-5cm9", "house_number", "street", "boro", "1"),
+    ("6bgk-3dad", "house_number", "street", "boro", "1"),
+    ("eabe-havv", "house_number", "house_street", "boro", "1"),
+    ("ic3t-wcy2", "house__", "street_name", "borough", "MANHATTAN"),
+    ("w9ak-ipjd", "house_no", "street_name", "borough", "MANHATTAN"),
+]
+BOROUGH_NAME = {1: "MANHATTAN", 2: "BRONX", 3: "BROOKLYN", 4: "QUEENS",
+                5: "STATEN ISLAND"}
+
+
 def resolve_bin(session, building):
-    """Look up a BIN from house number + street using the DOB Violations dataset."""
-    house = str(building["houseno"]).strip().upper()
-    street = str(building["street"]).strip().upper()
-    where = (
-        "upper(house_number)='%s' AND upper(street) like '%%%s%%' AND boro='%s'"
-        % (house.replace("'", ""), street.replace("'", ""), building["boro"])
-    )
-    rows = soda(session, "3h2n-5cm9", {"$select": "bin", "$where": where, "$limit": 1})
-    return rows[0]["bin"] if rows else None
+    """Look up a BIN from house number + street, trying several datasets."""
+    house = str(building["houseno"]).strip().upper().replace("'", "")
+    street = str(building["street"]).strip().upper().replace("'", "")
+    boro = int(building["boro"])
+    for dataset, hf, sf, bf, bval in BIN_SOURCES:
+        val = BOROUGH_NAME.get(boro, bval) if not bval.isdigit() else str(boro)
+        where = ("upper(%s)='%s' AND upper(%s) like '%%%s%%' AND upper(%s)='%s'"
+                 % (hf, house, sf, street, bf, val))
+        try:
+            rows = soda(session, dataset,
+                        {"$select": "bin", "$where": where, "$limit": 1})
+        except Exception:  # noqa: BLE001
+            continue          # wrong field names for this dataset, try the next
+        if rows and str(rows[0].get("bin") or "").strip("0 "):
+            return str(rows[0]["bin"]).strip()
+    return None
 
 
 # ----------------------------------------------------------------------
@@ -421,7 +442,10 @@ def check_building(session, building, source):
                 if result["bin"]:
                     print("   resolved BIN %s, add it to buildings.json" % result["bin"])
             if not result["bin"]:
-                raise RuntimeError("no BIN. Add \"bin\": \"1234567\" to this building.")
+                raise RuntimeError(
+                    "no BIN found by address. Open the profile link on the "
+                    "dashboard, copy the BIN, and add \"bin\": \"1234567\" "
+                    "to this building in buildings.json.")
             result["sections"] = count_opendata(session, result["bin"])
             result["profile_url"] = (
                 "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?"
