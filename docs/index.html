@@ -5,47 +5,44 @@
 <style>
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:#101418;color:#E8E6E1;
- font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
- font-variant-numeric:tabular-nums}
-.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
+ font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
 header{border-bottom:2px solid #E8E6E1;padding-bottom:14px;margin-bottom:28px;
  display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between}
 h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
 .stamp{font-size:13px;color:#8A9199}
-.headline{font-size:clamp(28px,5vw,42px);line-height:1.15;font-weight:600;
- letter-spacing:-.02em;margin:0 0 28px;max-width:20ch}
+.headline{font-size:clamp(26px,4.5vw,38px);line-height:1.2;font-weight:600;
+ letter-spacing:-.02em;margin:0 0 26px;max-width:22ch}
 .headline.quiet{color:#8A9199;font-weight:400}
-.change{border-left:3px solid #E2564D;background:#171C21;padding:14px 16px;margin-bottom:10px}
-.change .who{font-weight:600;margin-bottom:6px}
-.change .kind{display:inline-block;min-width:52px;font-size:12px;font-weight:600;
- letter-spacing:.04em;color:#101418;background:#E2564D;padding:1px 6px;margin-right:8px}
-.change .kind.chg{background:#D9A441}
-.change .kind.gone{background:#5E7F6B;color:#E8E6E1}
-.change .row{font-size:14px;padding:4px 0;border-top:1px solid #232A31;
- word-break:break-word;color:#C9C6C0}
-.change .was{font-size:13px;color:#7C838A;padding-left:60px}
+.moved{border-left:3px solid #E2564D;background:#171C21;padding:12px 16px;margin-bottom:10px;
+ font-size:15px}
+.moved b{font-weight:600}
+.moved .delta{color:#E2564D;font-weight:600}
+.moved .delta.down{color:#5E9E7B}
 table{width:100%;border-collapse:collapse;margin-top:14px}
 th{text-align:left;font-size:12px;font-weight:600;color:#8A9199;
  padding:0 10px 8px 0;border-bottom:1px solid #2B333A}
 th.n,td.n{text-align:right;padding-right:14px}
-td{padding:11px 10px 11px 0;border-bottom:1px solid #1D2429;font-size:15px;vertical-align:top}
+td{padding:12px 10px 12px 0;border-bottom:1px solid #1D2429;font-size:15px;vertical-align:top}
 td a{color:#E8E6E1;text-decoration:none;border-bottom:1px solid #3C444B}
 td a:hover,td a:focus{border-bottom-color:#E8E6E1}
-td.n{font-weight:600}
+td.n{font-weight:600;font-size:19px}
 td.n.hot{color:#E2564D}
+td.n.zero{color:#5A6169}
+.of{display:block;font-size:11px;color:#6C737A;font-weight:400;margin-top:2px}
 .sub{display:block;font-size:12px;color:#7C838A;margin-top:3px}
 .err{color:#D9A441;font-size:13px}
 footer{margin-top:40px;font-size:13px;color:#6C737A;line-height:1.7}
 a:focus-visible{outline:2px solid #D9A441;outline-offset:3px}
-@media(max-width:620px){th.n,td.n{padding-right:6px}td{font-size:14px}}
+@media(max-width:620px){th.n,td.n{padding-right:6px}td.n{font-size:17px}}
 </style></head>
 <body><div class="wrap">
-<header><h1>DOB watch</h1><div class="stamp">Checked Sep 02, 2026 at 03:02 PM EDT</div></header>
-<p class="headline quiet">No change since the last check.</p>
+<header><h1>DOB watch</h1><div class="stamp">Checked Sep 02, 2026 at 03:30 PM EDT via NYC Open Data</div></header>
+<p class="headline quiet">6 open records. Nothing moved.</p>
 
 <table>
 <thead><tr><th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th></tr></thead>
-<tbody><tr><td>530 East 23rd Street<span class="sub"><span class="err">BIS request failed after 3 tries: https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet (403 Client Error: F</span></span></td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr><tr><td>7 Peter Cooper Road<span class="sub"><span class="err">BIS request failed after 3 tries: https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet (403 Client Error: F</span></span></td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr></tbody></table>
-<footer>Counts are open records on file at the Buildings Information System.
-Click a count to open that BIS page. Checked hourly.</footer>
+<tbody><tr><td><a href="https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&amp;houseno=530&amp;street=east+23rd+street&amp;go2=+GO+&amp;requestid=0">530 East 23rd Street</a><span class="sub">BIN 1083696</span></td><td class="n zero"><a href="https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&amp;allbin=1083696&amp;allinquirytype=BXS3OCV3">0</a><span class="of">of 33</span></td><td class="n zero"><a href="https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&amp;allbin=1083696&amp;allinquirytype=BXS4OCV3&amp;stypeocv3=V">0</a><span class="of">of 11</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&amp;allbin=1083696">2</a><span class="of">of 7</span></td></tr><tr><td><a href="https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&amp;houseno=7&amp;street=peter+cooper+road&amp;go2=+GO+&amp;requestid=0">7 Peter Cooper Road</a><span class="sub">BIN 1083698</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&amp;allbin=1083698&amp;allinquirytype=BXS3OCV3">1</a><span class="of">of 25</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&amp;allbin=1083698&amp;allinquirytype=BXS4OCV3&amp;stypeocv3=V">2</a><span class="of">of 26</span></td><td class="n hot"><a href="https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&amp;allbin=1083698">1</a><span class="of">of 7</span></td></tr></tbody></table>
+<footer>Large number is open records. Small number is everything on file.
+Click a count to open that page on BIS.</footer>
 </div></body></html>
