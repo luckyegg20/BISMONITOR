@@ -24,9 +24,25 @@ you click through to the same screens you check by hand.
     monitor.py            the checker
     buildings.json        your building list
     state.json            last counts, created on first run
-    docs/index.html       the dashboard, rewritten every run
+    docs/index.html       the web page. Static. Never regenerated.
+    docs/data.json        results the page reads, rewritten every run
     requirements.txt      requests, beautifulsoup4
     .github/workflows/    hourly schedule
+
+## The web page
+
+docs/index.html reads docs/data.json from the same folder and renders it. Filter
+by address or BIN, sort by movement or by open count, and click a building to see
+its trend and jump into BIS. Every run appends a snapshot to data.json, capped at
+the last 500, so the trend lines fill in over time.
+
+Publish it with GitHub Pages: Settings, Pages, source main branch, folder /docs.
+Free accounts need a public repo for Pages; private repos need GitHub Pro.
+
+To open the page off your desktop instead, browsers block reading local files, so
+point it at the raw data URL:
+
+    index.html?src=https://raw.githubusercontent.com/USER/REPO/main/docs/data.json
 
 ## Add buildings
 

@@ -1,0 +1,132 @@
+{
+ "checked_at": "Sep 02, 2026 at 07:34 PM UTC",
+ "source": "opendata",
+ "sections": [
+  "complaints",
+  "dob_violations",
+  "ecb_violations"
+ ],
+ "labels": {
+  "complaints": "Complaints",
+  "dob_violations": "DOB",
+  "ecb_violations": "OATH/ECB"
+ },
+ "buildings": [
+  {
+   "id": "1|530|east 23rd street",
+   "label": "530 East 23rd Street",
+   "bin": "1083696",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=530&street=east+23rd+street&go2=+GO+&requestid=0",
+   "error": null,
+   "sections": {
+    "complaints": {
+     "open": 5,
+     "total": 43,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&allbin=1083696&allinquirytype=BXS3OCV3",
+     "error": null
+    },
+    "dob_violations": {
+     "open": 0,
+     "total": 18,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083696&allinquirytype=BXS4OCV3&stypeocv3=V",
+     "error": null
+    },
+    "ecb_violations": {
+     "open": 4,
+     "total": 30,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083696",
+     "error": null
+    }
+   }
+  },
+  {
+   "id": "1|7|peter cooper road",
+   "label": "7 Peter Cooper Road",
+   "bin": "1083696",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=7&street=peter+cooper+road&go2=+GO+&requestid=0",
+   "error": null,
+   "sections": {
+    "complaints": {
+     "open": 1,
+     "total": 9,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&allbin=1083696&allinquirytype=BXS3OCV3",
+     "error": null
+    },
+    "dob_violations": {
+     "open": 2,
+     "total": 22,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083696&allinquirytype=BXS4OCV3&stypeocv3=V",
+     "error": null
+    },
+    "ecb_violations": {
+     "open": 2,
+     "total": 9,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083696",
+     "error": null
+    }
+   }
+  }
+ ],
+ "history": [
+  {
+   "t": "2026-09-02T19:34:47+00:00",
+   "counts": {
+    "1|530|east 23rd street": {
+     "complaints": 3,
+     "dob_violations": 0,
+     "ecb_violations": 4
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 2,
+     "ecb_violations": 0
+    }
+   }
+  },
+  {
+   "t": "2026-09-02T19:34:47+00:00",
+   "counts": {
+    "1|530|east 23rd street": {
+     "complaints": 3,
+     "dob_violations": 0,
+     "ecb_violations": 4
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 2,
+     "ecb_violations": 0
+    }
+   }
+  },
+  {
+   "t": "2026-09-02T19:34:47+00:00",
+   "counts": {
+    "1|530|east 23rd street": {
+     "complaints": 5,
+     "dob_violations": 0,
+     "ecb_violations": 4
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 2,
+     "ecb_violations": 0
+    }
+   }
+  },
+  {
+   "t": "2026-09-02T19:34:47+00:00",
+   "counts": {
+    "1|530|east 23rd street": {
+     "complaints": 5,
+     "dob_violations": 0,
+     "ecb_violations": 4
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 2,
+     "ecb_violations": 2
+    }
+   }
+  }
+ ]
+}
