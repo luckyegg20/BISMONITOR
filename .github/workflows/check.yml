@@ -33,6 +33,7 @@ jobs:
           ALERT_TO: ${{ secrets.ALERT_TO }}
           ALERT_FROM: ${{ secrets.ALERT_FROM }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SOCRATA_TOKEN: ${{ secrets.SOCRATA_TOKEN }}
           TZ: America/New_York
         run: python monitor.py
 
