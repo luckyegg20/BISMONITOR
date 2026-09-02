@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """
-NYC DOB BIS monitor.
+NYC DOB open-record monitor.
 
-For each building in buildings.json:
-  1. Looks it up on BIS by borough + house number + street (same as the manual search).
-  2. Opens Complaints, Violations-DOB, and Violations-OATH/ECB.
-  3. Counts how many records are open.
-  4. Alerts when an open count moves.
+Reports three numbers per building: open complaints, open DOB violations,
+open OATH/ECB violations. Emails you only when one of those numbers moves.
+
+Two data sources:
+
+  opendata (default)  NYC Open Data Socrata API. Works from any IP including
+                      GitHub Actions. Refreshes daily.
+  bis                 Scrapes a810-bisweb.nyc.gov. Live to the minute, but BIS
+                      returns 403 to cloud IPs, so this only works from your own
+                      machine or office network.
 
 Run:  python monitor.py
+      python monitor.py --source bis
       python monitor.py --dry-run      check and print, send nothing
       python monitor.py --seed         record current counts, alert on nothing
 """
@@ -33,61 +39,180 @@ BUILDINGS_FILE = ROOT / "buildings.json"
 STATE_FILE = ROOT / "state.json"
 DASHBOARD_FILE = ROOT / "docs" / "index.html"
 
-BIS_BASE = "https://a810-bisweb.nyc.gov/bisweb/"
-PROFILE_URL = BIS_BASE + "PropertyProfileOverviewServlet"
-
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml",
-}
-
 SECTIONS = ["complaints", "dob_violations", "ecb_violations"]
 SECTION_LABEL = {
     "complaints": "Complaints",
     "dob_violations": "Violations - DOB",
     "ecb_violations": "Violations - OATH/ECB",
 }
-SHORT_LABEL = {
-    "complaints": "Complaints",
-    "dob_violations": "DOB",
-    "ecb_violations": "OATH/ECB",
-}
+SHORT_LABEL = {"complaints": "Complaints", "dob_violations": "DOB", "ecb_violations": "OATH/ECB"}
 
-REQUEST_PAUSE = 2.0
 TIMEOUT = 40
 
 
 # ----------------------------------------------------------------------
-# BIS fetching
+# Source A: NYC Open Data (Socrata)
 # ----------------------------------------------------------------------
 
-def fetch(session, url, params=None, attempts=3):
+SODA = "https://data.cityofnewyork.us/resource/%s.json"
+
+# dataset id, status field, wording that means the record is still open
+DATASETS = {
+    "complaints":     ("eabe-havv", "status", "ACTIVE"),
+    "dob_violations": ("3h2n-5cm9", "violation_category", "ACTIVE"),
+    "ecb_violations": ("6bgk-3dad", "ecb_violation_status", "ACTIVE"),
+}
+
+BIS_LINKS = {
+    "complaints": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet"
+                  "?requestid=1&allbin=%s&allinquirytype=BXS3OCV3",
+    "dob_violations": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet"
+                      "?requestid=1&allbin=%s&allinquirytype=BXS4OCV3&stypeocv3=V",
+    "ecb_violations": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet"
+                      "?requestid=1&allbin=%s",
+}
+
+
+def soda(session, dataset, params):
+    headers = {}
+    token = os.environ.get("SOCRATA_TOKEN")
+    if token:
+        headers["X-App-Token"] = token
+    last = None
+    for i in range(3):
+        try:
+            r = session.get(SODA % dataset, params=params, headers=headers, timeout=TIMEOUT)
+            if r.status_code == 429:
+                time.sleep(6)
+                continue
+            r.raise_for_status()
+            return r.json()
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            time.sleep(3 * (i + 1))
+    raise RuntimeError("Open Data request failed: %s (%s)" % (dataset, last))
+
+
+def soda_count(session, dataset, where):
+    rows = soda(session, dataset, {"$select": "count(1) as n", "$where": where})
+    return int(rows[0]["n"]) if rows else 0
+
+
+def count_opendata(session, bin_number):
+    """Return {section: {'open': n, 'total': n, 'url': ...}} for one BIN."""
+    b = str(bin_number).strip()
+    out = {}
+    for sec, (dataset, field, open_word) in DATASETS.items():
+        entry = {"url": BIS_LINKS[sec] % b}
+        try:
+            # bin is text in these datasets; fall back to numeric if that returns nothing
+            where = "bin='%s'" % b
+            total = soda_count(session, dataset, where)
+            if total == 0:
+                alt = "bin=%s" % b
+                if soda_count(session, dataset, alt) > 0:
+                    where = alt
+                    total = soda_count(session, dataset, where)
+            opened = soda_count(
+                session, dataset,
+                "%s AND upper(%s) like '%%%s%%'" % (where, field, open_word),
+            )
+            entry.update({"open": opened, "total": total, "error": None})
+        except Exception as exc:  # noqa: BLE001
+            entry["error"] = str(exc)[:160]
+        out[sec] = entry
+    return out
+
+
+def resolve_bin(session, building):
+    """Look up a BIN from house number + street using the DOB Violations dataset."""
+    house = str(building["houseno"]).strip().upper()
+    street = str(building["street"]).strip().upper()
+    where = (
+        "upper(house_number)='%s' AND upper(street) like '%%%s%%' AND boro='%s'"
+        % (house.replace("'", ""), street.replace("'", ""), building["boro"])
+    )
+    rows = soda(session, "3h2n-5cm9", {"$select": "bin", "$where": where, "$limit": 1})
+    return rows[0]["bin"] if rows else None
+
+
+# ----------------------------------------------------------------------
+# Source B: BIS scrape (local networks only)
+# ----------------------------------------------------------------------
+
+BIS_BASE = "https://a810-bisweb.nyc.gov/bisweb/"
+PROFILE_URL = BIS_BASE + "PropertyProfileOverviewServlet"
+BIS_HOME = BIS_BASE + "bispi00.jsp"
+
+BIS_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+              "image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-User": "?1",
+}
+
+BIS_PAUSE = 2.0
+
+
+def bis_fetch(session, url, params=None, referer=BIS_HOME, attempts=3):
+    headers = dict(BIS_HEADERS)
+    headers["Referer"] = referer
     last = None
     for i in range(attempts):
         try:
-            r = session.get(url, params=params, headers=HEADERS, timeout=TIMEOUT)
+            r = session.get(url, params=params, headers=headers, timeout=TIMEOUT)
+            if r.status_code == 403:
+                raise RuntimeError(
+                    "403 Forbidden. BIS blocks datacenter IPs. Run with the default "
+                    "--source opendata, or run this script from your own machine."
+                )
             r.raise_for_status()
-            time.sleep(REQUEST_PAUSE)
+            time.sleep(BIS_PAUSE)
             return r
         except Exception as exc:  # noqa: BLE001
             last = exc
+            if "403" in str(exc):
+                break
             time.sleep(4 * (i + 1))
-    raise RuntimeError("BIS request failed after %d tries: %s (%s)" % (attempts, url, last))
+    raise RuntimeError("BIS request failed: %s (%s)" % (url, last))
 
 
-def open_profile(session, building):
-    params = {
-        "boro": str(building["boro"]),
-        "houseno": str(building["houseno"]),
-        "street": building["street"],
-        "go2": " GO ",
-        "requestid": "0",
-    }
-    r = fetch(session, PROFILE_URL, params=params)
-    return r.text, r.url
+NOISE = re.compile(r"(date of this report|requestid|©|copyright|privacy policy|back to)", re.I)
+HAS_RECORD = re.compile(r"\d{2}/\d{2}/\d{4}|\d{6,}|\b[A-Z]?\d{5,}\b")
+CLOSED = re.compile(
+    r"\b(CLOSED|RESOLVE[DS]?|DISMISS(ED)?|CURED|COMPLIED|WRITTEN OFF|PAID IN FULL)\b", re.I
+)
+OPEN_WORD = re.compile(r"\b(ACTIVE|OPEN|IN VIOLATION|DEFAULTED|OUTSTANDING)\b", re.I)
+DISMISSED_NUMBER = re.compile(r"^[A-Z]\s*\*")
+
+
+def count_records(html):
+    soup = BeautifulSoup(html, "html.parser")
+    total = open_count = 0
+    for tr in soup.find_all("tr"):
+        cells = [" ".join(td.get_text(" ", strip=True).split()) for td in tr.find_all(["td", "th"])]
+        cells = [c for c in cells if c]
+        if len(cells) < 3:
+            continue
+        line = " | ".join(cells)
+        if NOISE.search(line) or not HAS_RECORD.search(line):
+            continue
+        total += 1
+        if DISMISSED_NUMBER.match(cells[0]):
+            continue
+        if OPEN_WORD.search(line):
+            open_count += 1
+        elif not CLOSED.search(line):
+            open_count += 1  # no status wording, count it open rather than miss it
+    return open_count, total
 
 
 def find_bin(html):
@@ -103,115 +228,80 @@ def find_section_links(html, base_url):
     found = {}
     for a in soup.find_all("a", href=True):
         text = " ".join(a.get_text(" ", strip=True).split()).lower()
-        low_href = a["href"].lower()
+        low = a["href"].lower()
         target = urljoin(base_url, a["href"])
-
-        if ("ecbquerybylocation" in low_href or "ecb" in text or "oath" in text) \
+        if ("ecbquerybylocation" in low or "ecb" in text or "oath" in text) \
                 and "ecb_violations" not in found:
             found["ecb_violations"] = target
-        elif "actionsbylocation" in low_href and "stypeocv3=v" in low_href \
+        elif "actionsbylocation" in low and "stypeocv3=v" in low \
                 and "dob_violations" not in found:
             found["dob_violations"] = target
-        elif "complaint" in low_href and "complaint" in text \
-                and "complaints" not in found:
+        elif "complaint" in low and "complaint" in text and "complaints" not in found:
             found["complaints"] = target
     return found
 
 
-def fallback_links(bin_number):
-    b = str(bin_number)
-    return {
-        "complaints": BIS_BASE + "OverviewForComplaintServlet?" + urlencode(
-            {"requestid": "1", "allbin": b, "allinquirytype": "BXS3OCV3"}
-        ),
-        "dob_violations": BIS_BASE + "ActionsByLocationServlet?" + urlencode(
-            {"requestid": "1", "allbin": b, "allinquirytype": "BXS4OCV3", "stypeocv3": "V"}
-        ),
-        "ecb_violations": BIS_BASE + "ECBQueryByLocationServlet?" + urlencode(
-            {"requestid": "1", "allbin": b}
-        ),
+def count_bis(session, building):
+    params = {
+        "boro": str(building["boro"]), "houseno": str(building["houseno"]),
+        "street": building["street"], "go2": " GO ", "requestid": "0",
     }
+    r = bis_fetch(session, PROFILE_URL, params=params)
+    html, url = r.text, r.url
+    bin_number = building.get("bin") or find_bin(html)
+    links = find_section_links(html, url)
+    if bin_number:
+        for sec, tmpl in BIS_LINKS.items():
+            links.setdefault(sec, tmpl % bin_number)
 
-
-# ----------------------------------------------------------------------
-# Counting open records
-# ----------------------------------------------------------------------
-
-NOISE = re.compile(r"(date of this report|requestid|©|copyright|privacy policy|back to)", re.I)
-HAS_RECORD = re.compile(r"\d{2}/\d{2}/\d{4}|\d{6,}|\b[A-Z]?\d{5,}\b")
-
-# BIS closed markers. Complaints close as CLOSED. DOB violations show RESOLVE or
-# DISMISS, and a dismissed number carries an asterisk (V*7052-18P). ECB violations
-# are open in ACTIVE status and closed in DISMISSED status.
-CLOSED = re.compile(
-    r"\b(CLOSED|RESOLVE[DS]?|DISMISS(ED)?|CURED|COMPLIED|WRITTEN OFF|PAID IN FULL)\b", re.I
-)
-OPEN_WORD = re.compile(r"\b(ACTIVE|OPEN|IN VIOLATION|DEFAULTED|OUTSTANDING)\b", re.I)
-DISMISSED_NUMBER = re.compile(r"^[A-Z]\*")
-
-
-def count_records(html):
-    """Return (open_count, total_count) for a BIS results page."""
-    soup = BeautifulSoup(html, "html.parser")
-    total = 0
-    open_count = 0
-    for tr in soup.find_all("tr"):
-        cells = [" ".join(td.get_text(" ", strip=True).split()) for td in tr.find_all(["td", "th"])]
-        cells = [c for c in cells if c]
-        if len(cells) < 3:
+    out = {}
+    for sec in SECTIONS:
+        link = links.get(sec)
+        if not link:
+            out[sec] = {"url": None, "error": "link not found"}
             continue
-        line = " | ".join(cells)
-        if NOISE.search(line) or not HAS_RECORD.search(line):
-            continue
-        total += 1
-        if DISMISSED_NUMBER.match(cells[0]):
-            continue
-        if OPEN_WORD.search(line):
-            open_count += 1
-        elif not CLOSED.search(line):
-            # no status wording either way, count it open so nothing gets missed
-            open_count += 1
-    return open_count, total
+        try:
+            page = bis_fetch(session, link, referer=url)
+            opened, total = count_records(page.text)
+            out[sec] = {"url": link, "open": opened, "total": total, "error": None}
+        except Exception as exc:  # noqa: BLE001
+            out[sec] = {"url": link, "error": str(exc)[:160]}
+    return bin_number, url, out
 
 
 # ----------------------------------------------------------------------
 # Check one building
 # ----------------------------------------------------------------------
 
-def check_building(session, building):
+def check_building(session, building, source):
     result = {
         "label": building.get("label") or "%s %s" % (building["houseno"], building["street"]),
-        "bin": None,
+        "bin": building.get("bin"),
         "profile_url": None,
         "sections": {},
         "error": None,
     }
     try:
-        html, url = open_profile(session, building)
-        result["profile_url"] = url
-        bin_number = building.get("bin") or find_bin(html)
-        result["bin"] = bin_number
-
-        links = find_section_links(html, url)
-        if bin_number:
-            for name, fb in fallback_links(bin_number).items():
-                links.setdefault(name, fb)
-
-        for name in SECTIONS:
-            link = links.get(name)
-            if not link:
-                result["sections"][name] = {"url": None, "error": "link not found"}
-                continue
-            try:
-                page = fetch(session, link)
-                opened, total = count_records(page.text)
-                result["sections"][name] = {
-                    "url": link, "open": opened, "total": total, "error": None
-                }
-            except Exception as exc:  # noqa: BLE001
-                result["sections"][name] = {"url": link, "error": str(exc)}
+        if source == "bis":
+            bin_number, url, sections = count_bis(session, building)
+            result.update({"bin": bin_number, "profile_url": url, "sections": sections})
+        else:
+            if not result["bin"]:
+                result["bin"] = resolve_bin(session, building)
+                if result["bin"]:
+                    print("   resolved BIN %s, add it to buildings.json" % result["bin"])
+            if not result["bin"]:
+                raise RuntimeError("no BIN. Add \"bin\": \"1234567\" to this building.")
+            result["sections"] = count_opendata(session, result["bin"])
+            result["profile_url"] = (
+                "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?"
+                + urlencode({
+                    "boro": building["boro"], "houseno": building["houseno"],
+                    "street": building["street"], "go2": " GO ", "requestid": "0",
+                })
+            )
     except Exception as exc:  # noqa: BLE001
-        result["error"] = str(exc)
+        result["error"] = str(exc)[:200]
     return result
 
 
@@ -219,8 +309,8 @@ def check_building(session, building):
 # Alerts
 # ----------------------------------------------------------------------
 
-def build_alert_text(changes, checked_at):
-    lines = ["NYC DOB BIS check - %s" % checked_at, ""]
+def build_alert_text(changes, checked_at, source):
+    lines = ["NYC DOB open-record check - %s (%s)" % (checked_at, source), ""]
     for c in changes:
         lines.append(c["building"])
         for sec in SECTIONS:
@@ -228,14 +318,12 @@ def build_alert_text(changes, checked_at):
             if not d:
                 continue
             if d["was"] is None:
-                lines.append("  %-22s %3d open" % (SECTION_LABEL[sec], d["now"]))
+                lines.append("  %-22s %4d open" % (SECTION_LABEL[sec], d["now"]))
             elif d["now"] != d["was"]:
-                lines.append(
-                    "  %-22s %3d open   was %d   %+d"
-                    % (SECTION_LABEL[sec], d["now"], d["was"], d["now"] - d["was"])
-                )
+                lines.append("  %-22s %4d open   was %d   %+d"
+                             % (SECTION_LABEL[sec], d["now"], d["was"], d["now"] - d["was"]))
             else:
-                lines.append("  %-22s %3d open   no change" % (SECTION_LABEL[sec], d["now"]))
+                lines.append("  %-22s %4d open   no change" % (SECTION_LABEL[sec], d["now"]))
         if c.get("url"):
             lines.append("  " + c["url"])
         lines.append("")
@@ -243,8 +331,7 @@ def build_alert_text(changes, checked_at):
 
 
 def send_email(subject, body):
-    host = os.environ.get("SMTP_HOST")
-    to = os.environ.get("ALERT_TO")
+    host, to = os.environ.get("SMTP_HOST"), os.environ.get("ALERT_TO")
     if not host or not to:
         print("email not configured, skipping")
         return False
@@ -254,12 +341,11 @@ def send_email(subject, body):
     msg["To"] = to
     msg.set_content(body)
     port = int(os.environ.get("SMTP_PORT", "465"))
-    if port == 465:
-        server = smtplib.SMTP_SSL(host, port, timeout=30)
-    else:
-        server = smtplib.SMTP(host, port, timeout=30)
-        server.starttls()
+    server = (smtplib.SMTP_SSL(host, port, timeout=30) if port == 465
+              else smtplib.SMTP(host, port, timeout=30))
     with server:
+        if port != 465:
+            server.starttls()
         user = os.environ.get("SMTP_USER")
         if user:
             server.login(user, os.environ["SMTP_PASS"])
@@ -282,10 +368,8 @@ def send_slack(text):
 # ----------------------------------------------------------------------
 
 def esc(s):
-    return (
-        str(s).replace("&", "&amp;").replace("<", "&lt;")
-        .replace(">", "&gt;").replace('"', "&quot;")
-    )
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;").replace('"', "&quot;"))
 
 
 DASHBOARD_CSS = """
@@ -324,17 +408,18 @@ a:focus-visible{outline:2px solid #D9A441;outline-offset:3px}
 """
 
 
-def render_dashboard(results, changes, checked_at):
-    total_open = sum(s.get("open", 0) for r in results for s in r["sections"].values())
+def render_dashboard(results, changes, checked_at, source):
+    total_open = sum(
+        s["open"] for r in results for s in r["sections"].values()
+        if isinstance(s.get("open"), int)
+    )
     if changes:
         head = '<p class="headline">%d open record%s. %d building%s moved.</p>' % (
             total_open, "" if total_open == 1 else "s",
-            len(changes), "" if len(changes) == 1 else "s",
-        )
+            len(changes), "" if len(changes) == 1 else "s")
     else:
         head = '<p class="headline quiet">%d open record%s. Nothing moved.</p>' % (
-            total_open, "" if total_open == 1 else "s"
-        )
+            total_open, "" if total_open == 1 else "s")
 
     blocks = []
     for c in changes:
@@ -344,39 +429,34 @@ def render_dashboard(results, changes, checked_at):
             if not d or d["was"] is None or d["now"] == d["was"]:
                 continue
             delta = d["now"] - d["was"]
-            cls = "delta down" if delta < 0 else "delta"
-            bits.append(
-                '%s %d open <span class="%s">(%+d)</span>'
-                % (esc(SHORT_LABEL[sec]), d["now"], cls, delta)
-            )
+            bits.append('%s %d open <span class="%s">(%+d)</span>' % (
+                esc(SHORT_LABEL[sec]), d["now"],
+                "delta down" if delta < 0 else "delta", delta))
         if bits:
-            blocks.append(
-                '<div class="moved"><b>%s</b>: %s</div>' % (esc(c["building"]), ", ".join(bits))
-            )
+            blocks.append('<div class="moved"><b>%s</b>: %s</div>'
+                          % (esc(c["building"]), ", ".join(bits)))
 
     rows = []
     for r in results:
         cells = []
         for sec in SECTIONS:
             s = r["sections"].get(sec, {})
-            if s.get("error") or "open" not in s:
+            if not isinstance(s.get("open"), int):
                 cells.append('<td class="n err">!</td>')
                 continue
-            cls = "n hot" if s["open"] else "n zero"
             inner = str(s["open"])
             if s.get("url"):
                 inner = '<a href="%s">%s</a>' % (esc(s["url"]), s["open"])
-            cells.append(
-                '<td class="%s">%s<span class="of">of %s</span></td>'
-                % (cls, inner, s.get("total", "?"))
-            )
+            cells.append('<td class="%s">%s<span class="of">of %s</span></td>'
+                         % ("n hot" if s["open"] else "n zero", inner, s.get("total", "?")))
         name = esc(r["label"])
         if r.get("profile_url"):
             name = '<a href="%s">%s</a>' % (esc(r["profile_url"]), name)
-        sub = "BIN %s" % esc(r["bin"]) if r.get("bin") else '<span class="err">not found on BIS</span>'
+        sub = "BIN %s" % esc(r["bin"]) if r.get("bin") else '<span class="err">no BIN</span>'
         if r.get("error"):
-            sub = '<span class="err">%s</span>' % esc(r["error"][:120])
-        rows.append('<tr><td>%s<span class="sub">%s</span></td>%s</tr>' % (name, sub, "".join(cells)))
+            sub = '<span class="err">%s</span>' % esc(r["error"][:140])
+        rows.append('<tr><td>%s<span class="sub">%s</span></td>%s</tr>'
+                    % (name, sub, "".join(cells)))
 
     html = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -384,45 +464,66 @@ def render_dashboard(results, changes, checked_at):
 <title>DOB watch</title>
 <style>__CSS__</style></head>
 <body><div class="wrap">
-<header><h1>DOB watch</h1><div class="stamp">Checked __WHEN__</div></header>
+<header><h1>DOB watch</h1><div class="stamp">Checked __WHEN__ via __SRC__</div></header>
 __HEAD__
 __BLOCKS__
 <table>
 <thead><tr><th>Building</th><th class="n">Complaints</th><th class="n">DOB</th><th class="n">OATH/ECB</th></tr></thead>
 <tbody>__ROWS__</tbody></table>
 <footer>Large number is open records. Small number is everything on file.
-Click a count to open that page on BIS. Checked hourly.</footer>
+Click a count to open that page on BIS.</footer>
 </div></body></html>"""
-    return (
-        html.replace("__CSS__", DASHBOARD_CSS)
-        .replace("__WHEN__", esc(checked_at))
-        .replace("__HEAD__", head)
-        .replace("__BLOCKS__", "".join(blocks))
-        .replace("__ROWS__", "".join(rows))
-    )
+    return (html.replace("__CSS__", DASHBOARD_CSS)
+            .replace("__WHEN__", esc(checked_at))
+            .replace("__SRC__", "NYC Open Data" if source == "opendata" else "BIS")
+            .replace("__HEAD__", head)
+            .replace("__BLOCKS__", "".join(blocks))
+            .replace("__ROWS__", "".join(rows)))
 
 
 # ----------------------------------------------------------------------
 # Main
 # ----------------------------------------------------------------------
 
+def load_state():
+    """Read state.json, discarding anything that is not a plain integer count."""
+    if not STATE_FILE.exists():
+        return {}
+    try:
+        raw = json.loads(STATE_FILE.read_text())
+    except Exception:  # noqa: BLE001
+        return {}
+    clean = {}
+    for sid, secs in (raw.items() if isinstance(raw, dict) else []):
+        if not isinstance(secs, dict):
+            continue
+        keep = {k: v for k, v in secs.items() if k in SECTIONS and isinstance(v, int)}
+        if keep:
+            clean[sid] = keep
+    if clean != raw:
+        print("state.json had entries from an older version, ignoring those")
+    return clean
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dry-run", action="store_true", help="check and print, send nothing")
-    ap.add_argument("--seed", action="store_true", help="save current counts without alerting")
+    ap.add_argument("--source", choices=["opendata", "bis"],
+                    default=os.environ.get("SOURCE", "opendata"))
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--seed", action="store_true")
     args = ap.parse_args()
 
     buildings = json.loads(BUILDINGS_FILE.read_text())
-    state = json.loads(STATE_FILE.read_text()) if STATE_FILE.exists() else {}
+    state = load_state()
     checked_at = datetime.now(timezone.utc).astimezone().strftime("%b %d, %Y at %I:%M %p %Z")
 
     session = requests.Session()
     results, changes, new_state = [], [], {}
 
     for b in buildings:
-        r = check_building(session, b)
+        r = check_building(session, b, args.source)
         results.append(r)
-        sid = "%s|%s|%s" % (b["boro"], b["houseno"], b["street"].lower())
+        sid = "%s|%s|%s" % (b["boro"], b["houseno"], str(b["street"]).lower())
         prev = state.get(sid, {})
         new_state[sid] = {}
 
@@ -430,56 +531,48 @@ def main():
         for sec in SECTIONS:
             s = r["sections"].get(sec, {})
             was = prev.get(sec)
-            if s.get("error") or "open" not in s:
-                # a failed fetch keeps the old number, so an outage never fakes a drop
-                if was is not None:
+            if not isinstance(s.get("open"), int):
+                if isinstance(was, int):
+                    # a failed lookup keeps the old number, so an outage never fakes a drop
                     new_state[sid][sec] = was
-                    r["sections"].setdefault(sec, {})["open"] = was
-                    r["sections"][sec].setdefault("total", was)
-                    r["sections"][sec]["error"] = None
                 continue
             new_state[sid][sec] = s["open"]
-            counts[sec] = {"now": s["open"], "was": was}
-            if was is not None and s["open"] != was:
+            counts[sec] = {"now": s["open"], "was": was if isinstance(was, int) else None}
+            if isinstance(was, int) and s["open"] != was:
                 moved = True
 
         if moved and not args.seed:
-            changes.append({"building": r["label"], "counts": counts, "url": r.get("profile_url")})
+            changes.append({"building": r["label"], "counts": counts,
+                            "url": r.get("profile_url")})
 
-        print(
-            "%-34s BIN %-9s %s"
-            % (
-                r["label"], r["bin"] or "-",
-                "  ".join(
-                    "%s %s open" % (SHORT_LABEL[s], r["sections"].get(s, {}).get("open", "?"))
-                    for s in SECTIONS
-                ),
-            )
-        )
+        print("%-32s BIN %-9s %s" % (
+            r["label"], r["bin"] or "-",
+            "  ".join("%s %s" % (SHORT_LABEL[s], r["sections"].get(s, {}).get("open", "?"))
+                      for s in SECTIONS)))
         if r.get("error"):
             print("   error: %s" % r["error"])
+        for sec in SECTIONS:
+            e = r["sections"].get(sec, {}).get("error")
+            if e:
+                print("   %s: %s" % (SHORT_LABEL[sec], e))
 
     DASHBOARD_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DASHBOARD_FILE.write_text(render_dashboard(results, changes, checked_at))
+    DASHBOARD_FILE.write_text(render_dashboard(results, changes, checked_at, args.source))
     print("dashboard written to %s" % DASHBOARD_FILE)
 
     if changes and not args.dry_run and not args.seed:
-        body = build_alert_text(changes, checked_at)
+        body = build_alert_text(changes, checked_at, args.source)
         head = changes[0]
-        first = next(
-            (SHORT_LABEL[s] for s in SECTIONS
-             if head["counts"].get(s) and head["counts"][s]["was"] is not None
-             and head["counts"][s]["now"] != head["counts"][s]["was"]),
-            "records",
-        )
+        first = next((SHORT_LABEL[s] for s in SECTIONS
+                      if head["counts"].get(s) and head["counts"][s]["was"] is not None
+                      and head["counts"][s]["now"] != head["counts"][s]["was"]), "records")
         subject = "DOB watch: %s open count moved at %s%s" % (
             first, head["building"],
-            "" if len(changes) == 1 else " and %d more" % (len(changes) - 1),
-        )
+            "" if len(changes) == 1 else " and %d more" % (len(changes) - 1))
         send_email(subject, body)
         send_slack(subject + "\n```\n" + body + "\n```")
     elif changes:
-        print("\n" + build_alert_text(changes, checked_at))
+        print("\n" + build_alert_text(changes, checked_at, args.source))
     else:
         print("no change in open counts")
 

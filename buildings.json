@@ -3,7 +3,13 @@
     "label": "530 East 23rd Street",
     "boro": 1,
     "houseno": "530",
-    "street": "east 23rd street"
-  }, { "label": "7 Peter Cooper Road", "boro": 1, "houseno": "7",
-    "street": "Peter Cooper Road" }
+    "street": "east 23rd street",
+    "bin": "1083696"
+  },
+  {
+    "label": "7 Peter Cooper Road",
+    "boro": 1,
+    "houseno": "7",
+    "street": "peter cooper road"
+  }
 ]

@@ -1,0 +1,58 @@
+name: DOB watch
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # top of every hour, UTC
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "normal = check and alert. seed = record what is on file now, alert on nothing."
+        type: choice
+        required: true
+        default: normal
+        options: [normal, seed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dob-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Check BIS
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          ALERT_TO: ${{ secrets.ALERT_TO }}
+          ALERT_FROM: ${{ secrets.ALERT_FROM }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SOCRATA_TOKEN: ${{ secrets.SOCRATA_TOKEN }}
+          TZ: America/New_York
+        run: |
+          if [ "${{ inputs.mode }}" = "seed" ]; then
+            python monitor.py --seed
+          else
+            python monitor.py
+          fi
+
+      - name: Save state and dashboard
+        run: |
+          git config user.name "dob-watch"
+          git config user.email "dob-watch@users.noreply.github.com"
+          git add state.json docs/index.html
+          git diff --staged --quiet || git commit -m "check $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
