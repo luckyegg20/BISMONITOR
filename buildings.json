@@ -3,7 +3,8 @@
     "label": "601 East 20th Street",
     "boro": 1,
     "houseno": "601",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1083700"
   },
   {
     "label": "8 Peter Cooper Road",
@@ -16,7 +17,8 @@
     "label": "541 East 20th Street",
     "boro": 1,
     "houseno": "541",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082862"
   },
   {
     "label": "10, 8 & 6 Stuyvesant Oval",
@@ -36,19 +38,22 @@
     "label": "655, 653, 651, 649, 647 East 14th Street",
     "boro": 1,
     "houseno": "655",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082766"
   },
   {
     "label": "625, 615 & 605 East 14th Street*",
     "boro": 1,
     "houseno": "625",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082771"
   },
   {
     "label": "645, 635 East 14th Street & 245 Avenue C",
     "boro": 1,
     "houseno": "645",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082726"
   },
   {
     "label": "271 Avenue C - small",
@@ -61,7 +66,8 @@
     "label": "531 East 20th Street",
     "boro": 1,
     "houseno": "531",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1083696"
   },
   {
     "label": "6 Peter Cooper Road",
@@ -123,7 +129,8 @@
     "label": "511 East 20th Street",
     "boro": 1,
     "houseno": "511",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1083689"
   },
   {
     "label": "4 Peter Cooper Road",
@@ -136,7 +143,8 @@
     "label": "441 East 20th Street",
     "boro": 1,
     "houseno": "441",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1083688"
   },
   {
     "label": "2 Peter Cooper Road",
@@ -163,13 +171,15 @@
     "label": "620 & 610 East 20th Street",
     "boro": 1,
     "houseno": "620",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082852"
   },
   {
     "label": "628, 626, 624 & 622 East 20th Street",
     "boro": 1,
     "houseno": "628",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082853"
   },
   {
     "label": "315, 319, & 321 Avenue C",
@@ -182,7 +192,8 @@
     "label": "431 East 20th Street",
     "boro": 1,
     "houseno": "431",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1083684"
   },
   {
     "label": "350 First Avenue",
@@ -223,19 +234,22 @@
     "label": "240, 250 First Avenue & 405 East 14th Street",
     "boro": 1,
     "houseno": "240",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082875"
   },
   {
     "label": "455, 453, 451, 449, 447 & 272 East 14th Street",
     "boro": 1,
     "houseno": "455",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082880"
   },
   {
     "label": "445 & 435 East 14th Street",
     "boro": 1,
     "houseno": "445",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082879"
   },
   {
     "label": "270 First Avenue",
@@ -255,13 +269,15 @@
     "label": "420 East 23rd Street",
     "boro": 1,
     "houseno": "420",
-    "street": "east 23rd street"
+    "street": "east 23rd street",
+    "bin": "1083686"
   },
   {
     "label": "440 East 23rd Street",
     "boro": 1,
     "houseno": "440",
-    "street": "east 23rd street"
+    "street": "east 23rd street",
+    "bin": "1083690"
   },
   {
     "label": "3 Peter Cooper Road",
@@ -274,49 +290,57 @@
     "label": "515 & 505 East 14th Street",
     "boro": 1,
     "houseno": "515",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082883"
   },
   {
     "label": "545 & 535 East 14th Street",
     "boro": 1,
     "houseno": "545",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082884"
   },
   {
     "label": "525, 523, & 521 East 14th Street",
     "boro": 1,
     "houseno": "525",
-    "street": "east 14th street"
+    "street": "east 14th street",
+    "bin": "1082885"
   },
   {
     "label": "520 & 510 East 20th Street",
     "boro": 1,
     "houseno": "520",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082859"
   },
   {
     "label": "526, 524 & 522 East 20th Street",
     "boro": 1,
     "houseno": "526",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082860"
   },
   {
     "label": "540 & 530 East 20th Street",
     "boro": 1,
     "houseno": "540",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082862"
   },
   {
     "label": "510 East 23rd Street",
     "boro": 1,
     "houseno": "510",
-    "street": "east 23rd street"
+    "street": "east 23rd street",
+    "bin": "1083692"
   },
   {
     "label": "530 East 23rd Street",
     "boro": 1,
     "houseno": "530",
-    "street": "east 23rd street"
+    "street": "east 23rd street",
+    "bin": "1083695"
   },
   {
     "label": "7 Peter Cooper Road",
@@ -343,19 +367,22 @@
     "label": "400, 410 East 20th Street & 330 First Avenue",
     "boro": 1,
     "houseno": "400",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082865"
   },
   {
     "label": "440 & 430 East 20th Street",
     "boro": 1,
     "houseno": "440",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082866"
   },
   {
     "label": "450, 448, 446, 444 & 442 East 20th Street",
     "boro": 1,
     "houseno": "450",
-    "street": "east 20th street"
+    "street": "east 20th street",
+    "bin": "1082867"
   },
   {
     "label": "310 First Avenue",
