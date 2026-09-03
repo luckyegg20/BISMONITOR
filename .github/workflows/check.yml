@@ -2,7 +2,7 @@ name: DOB watch
 
 on:
   schedule:
-    - cron: "0 * * * *"   # top of every hour, UTC
+    - cron: "7 12,16,20 * * *"
   workflow_dispatch:
 
 permissions:
