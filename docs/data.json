@@ -1,5 +1,5 @@
 {
- "checked_at": "Sep 03, 2026 at 12:19 PM EDT",
+ "checked_at": "Sep 03, 2026 at 12:50 PM EDT",
  "source": "opendata",
  "sections": [
   "complaints",
@@ -15,26 +15,26 @@
   {
    "id": "1|601|east 20th street",
    "label": "601 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083700",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=601&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 28,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083700",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 18,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083700&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 10,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083700",
      "error": null
     }
    }
@@ -69,27 +69,27 @@
   {
    "id": "1|541|east 20th street",
    "label": "541 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082862",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=541&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 31,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082862",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 35,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082862&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
      "open": null,
      "total": null,
-     "url": null,
-     "error": null
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082862",
+     "error": "HTTP 400 on 6bgk-3dad"
     }
    }
   },
@@ -150,26 +150,26 @@
   {
    "id": "1|655|east 14th street",
    "label": "655, 653, 651, 649, 647 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082766",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=655&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 35,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082766",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 131,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082766&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 19,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082766",
      "error": null
     }
    }
@@ -177,26 +177,26 @@
   {
    "id": "1|625|east 14th street",
    "label": "625, 615 & 605 East 14th Street*",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082771",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=625&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 16,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082771",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 85,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082771&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 3,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082771",
      "error": null
     }
    }
@@ -204,26 +204,26 @@
   {
    "id": "1|645|east 14th street",
    "label": "645, 635 East 14th Street & 245 Avenue C",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082726",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=645&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 26,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082726",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 66,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082726&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 12,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082726",
      "error": null
     }
    }
@@ -258,26 +258,26 @@
   {
    "id": "1|531|east 20th street",
    "label": "531 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083696",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=531&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 33,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083696",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 11,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083696&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 2,
+     "total": 7,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083696",
      "error": null
     }
    }
@@ -501,26 +501,26 @@
   {
    "id": "1|511|east 20th street",
    "label": "511 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083689",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=511&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 28,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083689",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 21,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083689&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 11,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083689",
      "error": null
     }
    }
@@ -555,26 +555,26 @@
   {
    "id": "1|441|east 20th street",
    "label": "441 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083688",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=441&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 30,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083688",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 32,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083688&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 10,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083688",
      "error": null
     }
    }
@@ -663,26 +663,26 @@
   {
    "id": "1|620|east 20th street",
    "label": "620 & 610 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082852",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=620&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 1,
+     "total": 22,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082852",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 35,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082852&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 2,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082852",
      "error": null
     }
    }
@@ -690,26 +690,26 @@
   {
    "id": "1|628|east 20th street",
    "label": "628, 626, 624 & 622 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082853",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=628&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 25,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082853",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 47,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082853&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 21,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082853",
      "error": null
     }
    }
@@ -744,26 +744,26 @@
   {
    "id": "1|431|east 20th street",
    "label": "431 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083684",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=431&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 13,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083684",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 26,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083684&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 9,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083684",
      "error": null
     }
    }
@@ -906,26 +906,26 @@
   {
    "id": "1|240|east 14th street",
    "label": "240, 250 First Avenue & 405 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082875",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=240&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 80,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082875",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 90,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082875&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 38,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082875",
      "error": null
     }
    }
@@ -933,26 +933,26 @@
   {
    "id": "1|455|east 14th street",
    "label": "455, 453, 451, 449, 447 & 272 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082880",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=455&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 49,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082880",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 99,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082880&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 10,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082880",
      "error": null
     }
    }
@@ -960,26 +960,26 @@
   {
    "id": "1|445|east 14th street",
    "label": "445 & 435 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082879",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=445&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 10,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082879",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 39,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082879&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 3,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082879",
      "error": null
     }
    }
@@ -1041,26 +1041,26 @@
   {
    "id": "1|420|east 23rd street",
    "label": "420 East 23rd Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083686",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=420&street=east+23rd+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 13,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083686",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 20,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083686&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 5,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083686",
      "error": null
     }
    }
@@ -1068,26 +1068,26 @@
   {
    "id": "1|440|east 23rd street",
    "label": "440 East 23rd Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083690",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=440&street=east+23rd+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 1,
+     "total": 15,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083690",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 20,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083690&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 7,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083690",
      "error": null
     }
    }
@@ -1122,26 +1122,26 @@
   {
    "id": "1|515|east 14th street",
    "label": "515 & 505 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082883",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=515&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 1,
+     "total": 28,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082883",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 41,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082883&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 5,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082883",
      "error": null
     }
    }
@@ -1149,26 +1149,26 @@
   {
    "id": "1|545|east 14th street",
    "label": "545 & 535 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082884",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=545&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 18,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082884",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 38,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082884&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 7,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082884",
      "error": null
     }
    }
@@ -1176,26 +1176,26 @@
   {
    "id": "1|525|east 14th street",
    "label": "525, 523, & 521 East 14th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082885",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=525&street=east+14th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 16,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082885",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 68,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082885&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 4,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082885",
      "error": null
     }
    }
@@ -1203,26 +1203,26 @@
   {
    "id": "1|520|east 20th street",
    "label": "520 & 510 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082859",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=520&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 28,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082859",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 32,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082859&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 1,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082859",
      "error": null
     }
    }
@@ -1230,26 +1230,26 @@
   {
    "id": "1|526|east 20th street",
    "label": "526, 524 & 522 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082860",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=526&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 27,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082860",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 42,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082860&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 1,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082860",
      "error": null
     }
    }
@@ -1257,53 +1257,53 @@
   {
    "id": "1|540|east 20th street",
    "label": "540 & 530 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082862",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=540&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 31,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082862",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 35,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082862&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
      "open": null,
      "total": null,
-     "url": null,
-     "error": null
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082862",
+     "error": "HTTP 400 on 6bgk-3dad"
     }
    }
   },
   {
    "id": "1|510|east 23rd street",
    "label": "510 East 23rd Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083692",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=510&street=east+23rd+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 27,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083692",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 25,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083692&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 13,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083692",
      "error": null
     }
    }
@@ -1311,26 +1311,26 @@
   {
    "id": "1|530|east 23rd street",
    "label": "530 East 23rd Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1083695",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=530&street=east+23rd+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 1,
+     "total": 20,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083695",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 17,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1083695&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 2,
+     "total": 8,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1083695",
      "error": null
     }
    }
@@ -1419,26 +1419,26 @@
   {
    "id": "1|400|east 20th street",
    "label": "400, 410 East 20th Street & 330 First Avenue",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082865",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=400&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 43,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082865",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 45,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082865&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 16,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082865",
      "error": null
     }
    }
@@ -1446,26 +1446,26 @@
   {
    "id": "1|440|east 20th street",
    "label": "440 & 430 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082866",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=440&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 1,
+     "total": 26,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082866",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 29,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082866&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 15,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082866",
      "error": null
     }
    }
@@ -1473,26 +1473,26 @@
   {
    "id": "1|450|east 20th street",
    "label": "450, 448, 446, 444 & 442 East 20th Street",
-   "bin": null,
-   "profile_url": null,
-   "error": "no BIN found by address. Open the profile link on the dashboard, copy the BIN, and add \"bin\": \"1234567\" to this building in buildings.json.",
+   "bin": "1082867",
+   "profile_url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=1&houseno=450&street=east+20th+street&go2=+GO+&requestid=0",
+   "error": null,
    "sections": {
     "complaints": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 28,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082867",
      "error": null
     },
     "dob_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 69,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ActionsByLocationServlet?requestid=1&allbin=1082867&allinquirytype=BXS4OCV3&stypeocv3=V",
      "error": null
     },
     "ecb_violations": {
-     "open": null,
-     "total": null,
-     "url": null,
+     "open": 0,
+     "total": 10,
+     "url": "https://a810-bisweb.nyc.gov/bisweb/ECBQueryByLocationServlet?requestid=1&allbin=1082867",
      "error": null
     }
    }
@@ -3033,6 +3033,291 @@
      "complaints": null,
      "dob_violations": null,
      "ecb_violations": null
+    },
+    "1|310|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    }
+   }
+  },
+  {
+   "t": "2026-09-03T16:51:44+00:00",
+   "counts": {
+    "1|601|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|8|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|541|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": null
+    },
+    "1|10|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|4|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|655|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|625|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|645|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|271|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|531|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|6|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|5|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|281|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|309|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": null
+    },
+    "1|277|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|272|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|300|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|280|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|511|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|4|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|441|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|2|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|16|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|20|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|620|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|628|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|315|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|431|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|350|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|360|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|370|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|5|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|1|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|240|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|455|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|445|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|270|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|390|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|420|east 23rd street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|440|east 23rd street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|3|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|515|east 14th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|545|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|525|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|520|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|526|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|540|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": null
+    },
+    "1|510|east 23rd street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|530|east 23rd street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    },
+    "1|11|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|19|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|400|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|440|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|450|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
     },
     "1|310|first avenue": {
      "complaints": 0,
