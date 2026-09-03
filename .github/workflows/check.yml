@@ -2,8 +2,22 @@ name: DOB watch
 
 on:
   schedule:
-    - cron: "7 12,16,20 * * *"
+    # 12:07, 16:07 and 20:07 UTC = 8am, noon and 4pm Eastern in summer,
+    # 7am, 11am and 3pm in winter. GitHub cron is always UTC and never
+    # shifts for daylight saving. Minute :07 because the :00 queue is the
+    # most congested and starts latest.
+    # Two attempts per window. GitHub drops scheduled runs under load, and a
+    # second run costs nothing: the script compares against saved state, not
+    # a time window, so a duplicate check finds no change and sends nothing.
+    - cron: "7,37 12,16,20 * * *"
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "normal = check and alert. seed = record counts, no alert. explain = list the records behind each count."
+        type: choice
+        required: true
+        default: normal
+        options: [normal, seed, explain]
 
 permissions:
   contents: write
@@ -35,12 +49,36 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SOCRATA_TOKEN: ${{ secrets.SOCRATA_TOKEN }}
           TZ: America/New_York
-        run: python monitor.py
+        run: |
+          if [ "${{ inputs.mode }}" = "seed" ]; then
+            python monitor.py --seed
+          elif [ "${{ inputs.mode }}" = "explain" ]; then
+            python monitor.py --explain
+          else
+            python monitor.py
+          fi
 
-      - name: Save state and dashboard
+      - name: Show what was produced
+        if: always()
+        run: |
+          echo "--- files in docs/ ---"
+          ls -la docs/ || echo "NO docs FOLDER"
+          echo "--- repo root ---"
+          ls -la
+
+      - name: Save state and page data
         run: |
           git config user.name "dob-watch"
           git config user.email "dob-watch@users.noreply.github.com"
           git add -A
+          echo "--- staged ---"
+          git diff --staged --name-only
           git diff --staged --quiet || git commit -m "check $(date -u +%Y-%m-%dT%H:%MZ)"
           git push
+          echo "pushed"
+
+      - name: Confirm data.json is committed
+        run: |
+          git ls-files docs/data.json | grep . \
+            && echo "OK data.json is tracked" \
+            || (echo "FAIL data.json is not in the repo" && exit 1)
