@@ -273,6 +273,7 @@ function detailRow(b){
           <span class="meta"> &middot; DOB says ${esc(v.status || "?")} &middot; issued ${esc(v.date || "?")}${
             v.severity ? " &middot; " + esc(v.severity) : ""}${
             v.hearing_date ? " &middot; hearing " + esc(v.hearing_date) + (v.hearing_status ? " (" + esc(v.hearing_status.toLowerCase()) + ")" : " (no status)") : ""}${
+            v.url ? ` &middot; <a href="${esc(v.url)}" target="_blank" rel="noopener">open on BIS</a>` : ""}${
             done && st.by ? " &middot; by " + esc(st.by) : ""}</span>
         </span></label>`;
     }).join("")}
