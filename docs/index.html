@@ -150,7 +150,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -403,7 +403,28 @@ function render(){
  * writes both go through here.
  */
 let jsonpSeq = 0;
-function callSheet(params){
+
+/**
+ * Talk to the Apps Script web app. Reads and writes both go through a plain
+ * GET, which is a simple request and needs no preflight.
+ *
+ * fetch is tried first. If the browser blocks it, fall back to JSONP, which
+ * loads the reply as a script tag. Some setups block one and allow the other,
+ * so having both means neither failure mode takes the page down.
+ */
+async function callSheet(params){
+  const q = new URLSearchParams({...params, t: Date.now()});
+  try {
+    const r = await fetch(SHEET_URL + "?" + q.toString(),
+                          {cache: "no-store", redirect: "follow"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r.json();
+  } catch (err) {
+    return await callSheetJsonp(params);
+  }
+}
+
+function callSheetJsonp(params){
   return new Promise((resolve, reject) => {
     const cb = "dobwatch_cb_" + (++jsonpSeq);
     const q = new URLSearchParams({...params, callback: cb, t: Date.now()});
@@ -446,9 +467,9 @@ async function diagnose(err){
   try {
     const r = await fetch(url, {redirect: "follow"});
     const body = (await r.text()).trim();
-    if (body.startsWith("test(")) {
-      return "the sheet replied correctly but the browser blocked the script tag. "
-           + "Try a different browser or turn off any ad blocker on this page.";
+    if (body.startsWith("test(") || body.startsWith("{")) {
+      return "the sheet replied but the page could not read it. Reload once; "
+           + "if it persists, try another browser or disable extensions here.";
     }
     if (body.startsWith("{")) {
       return "the deployed script is an OLD VERSION: it ignores the callback "
