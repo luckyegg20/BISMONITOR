@@ -198,11 +198,39 @@
   "dob_violations": 0,
   "ecb_violations": 0
  },
- "1|460|2 avenue": {},
- "1|470|2 avenue": {},
- "1|480|2 avenue": {},
- "1|484|2 avenue": {},
- "1|490|2 avenue": {},
+ "1|460|2 avenue": {
+  "complaint_ids": [
+   "1735540",
+   "1735350"
+  ],
+  "complaints": 2,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "1|470|2 avenue": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "1|480|2 avenue": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "1|484|2 avenue": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "1|490|2 avenue": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
  "1|4|peter cooper road": {
   "complaint_ids": [
    "1735362",
@@ -218,8 +246,20 @@
   "dob_violations": 0,
   "ecb_violations": 0
  },
- "1|500|2 avenue": {},
- "1|510|2 avenue": {},
+ "1|500|2 avenue": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "1|510|2 avenue": {
+  "complaint_ids": [
+   "1734354"
+  ],
+  "complaints": 1,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
  "1|510|east 23rd street": {
   "complaint_ids": [],
   "complaints": 0,
@@ -240,7 +280,12 @@
   "dob_violations": 0,
   "ecb_violations": 0
  },
- "1|520|2 avenue": {},
+ "1|520|2 avenue": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
  "1|520|east 20th street": {
   "complaint_ids": [],
   "complaints": 0,
@@ -361,9 +406,40 @@
   "dob_violations": 0,
   "ecb_violations": 0
  },
- "1|8|spruce street": {},
- "4|104-20|queens boulevard": {},
- "4|104-40|queens boulevard": {},
- "4|104-60|queens boulevard": {},
- "4|104-70|queens boulevard": {}
+ "1|8|spruce street": {
+  "complaint_ids": [
+   "1735068"
+  ],
+  "complaints": 1,
+  "dob_violations": 0,
+  "ecb_violations": 4
+ },
+ "4|104-20|queens boulevard": {
+  "complaint_ids": [
+   "4A46850"
+  ],
+  "complaints": 1,
+  "dob_violations": 0,
+  "ecb_violations": 1
+ },
+ "4|104-40|queens boulevard": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "4|104-60|queens boulevard": {
+  "complaint_ids": [],
+  "complaints": 0,
+  "dob_violations": 0,
+  "ecb_violations": 0
+ },
+ "4|104-70|queens boulevard": {
+  "complaint_ids": [
+   "4A46797"
+  ],
+  "complaints": 1,
+  "dob_violations": 0,
+  "ecb_violations": 1
+ }
 }
