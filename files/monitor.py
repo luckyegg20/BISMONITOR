@@ -54,6 +54,7 @@ SHORT_LABEL = {"complaints": "Complaints (30d)", "dob_violations": "Violations-D
 TIMEOUT = 40
 COMPLAINT_WINDOW_DAYS = 30   # complaints counted as "recently filed"
 BALANCE_GRACE_DAYS = 3       # days after a hearing before a balance counts as overdue
+DEFAULT_GROUP = "PCVST"      # group for any building with no "group" field
 
 
 # ----------------------------------------------------------------------
@@ -557,6 +558,7 @@ def count_bis(session, building):
 def check_building(session, building, source):
     result = {
         "label": building.get("label") or "%s %s" % (building["houseno"], building["street"]),
+        "group": building.get("group") or DEFAULT_GROUP,
         "bin": building.get("bin"),
         "profile_url": None,
         "sections": {},
@@ -688,6 +690,7 @@ def write_data(results, checked_at, source, sids):
         buildings.append({
             "id": sid,
             "label": r["label"],
+            "group": r.get("group") or DEFAULT_GROUP,
             "bin": r["bin"],
             "profile_url": r["profile_url"],
             "error": r["error"],

@@ -55,6 +55,12 @@ th{text-align:left;font-size:12px;font-weight:600;color:var(--dim);
   padding:0 8px 8px 0;border-bottom:1px solid var(--line2);white-space:nowrap;
   vertical-align:bottom}
 th.n{text-align:right;padding-right:12px;white-space:normal;max-width:96px}
+tr.grp td{padding:22px 0 6px;border-bottom:2px solid var(--line2);
+  font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text)}
+tr.grp:first-child td{padding-top:4px}
+tr.grp .gn{float:right;font-weight:400;letter-spacing:0;text-transform:none;
+  color:var(--dim);font-size:12px}
 tbody tr.b{border-bottom:1px solid var(--line);cursor:pointer}
 tbody tr.b:hover td,tbody tr.b.open td{background:#131920}
 td{padding:12px 8px 12px 0;font-size:15px;vertical-align:top}
@@ -159,7 +165,7 @@ let DATA = null, expanded = null;
 const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
-const ui = {q:"", sort:"moved"};
+const ui = {q:"", sort:"moved", group:"all"};
 
 // data.json sits next to this page. ?src=<url> points somewhere else,
 // e.g. a raw.githubusercontent.com URL when you open this file locally.
@@ -356,7 +362,11 @@ function render(){
   };
   rows = rows.slice().sort(sorters[ui.sort] || sorters.name);
 
-  const body = rows.map(b => {
+  const groupsAll = [...new Set(DATA.buildings.map(b => b.group || "Other"))];
+  if (ui.group !== "all" && !groupsAll.includes(ui.group)) ui.group = "all";
+  if (ui.group !== "all") rows = rows.filter(b => (b.group || "Other") === ui.group);
+
+  const rowHtml = b => {
     const d = deltas(b);
     const cells = SEC.map(s => {
       const v = b.sections[s];
@@ -380,6 +390,16 @@ function render(){
         aria-expanded="${isOpen}">
       <td><span class="chev">${isOpen?"&#9662;":"&#9656;"}</span><span class="name">${esc(b.label)}</span>${sub}</td>
       ${cells}</tr>` + (isOpen ? detailRow(b) : "");
+  };
+
+  // banners follow the order groups appear in buildings.json, not the sort order
+  const present = groupsAll.filter(g => rows.some(b => (b.group || "Other") === g));
+  const body = present.map(g => {
+    const inGroup = rows.filter(b => (b.group || "Other") === g);
+    const n = inGroup.length;
+    return `<tr class="grp"><td colspan="4">${esc(g)}` +
+           `<span class="gn">${n} building${n === 1 ? "" : "s"}</span></td></tr>` +
+           inGroup.map(rowHtml).join("");
   }).join("");
 
   // which buildings owe money, and how much
@@ -408,6 +428,7 @@ function render(){
   app.innerHTML = head + since + owedBlock + `
   <div class="controls">
     <input type="search" id="q" placeholder="Filter by address or BIN" value="${esc(ui.q)}">
+    <select id="grp"></select>
     <select id="sort">
       <option value="moved">Sort: recent movement</option>
       <option value="name">Sort: address</option>
@@ -435,6 +456,12 @@ function render(){
   const qs = document.getElementById("q");
   qs.addEventListener("input", e => { ui.q = e.target.value; render();
     const n = document.getElementById("q"); n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
+  const gsel = document.getElementById("grp");
+  gsel.innerHTML = [`<option value="all">All properties</option>`]
+    .concat(groupsAll.map(g => `<option value="${esc(g)}">${esc(g)}</option>`)).join("");
+  gsel.value = ui.group;
+  gsel.addEventListener("change", e => { ui.group = e.target.value; render(); });
+
   const sel = document.getElementById("sort");
   sel.value = ui.sort;
   sel.addEventListener("change", e => { ui.sort = e.target.value; render(); });
