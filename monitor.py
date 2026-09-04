@@ -188,7 +188,7 @@ def explain(session, bin_number, label):
         if not rows:
             print("  none")
             continue
-        if sec == "ecb_violations" and rows:
+        if rows:
             print("  fields published: %s" % ", ".join(sorted(rows[0].keys())))
         for row in rows:
             bits = ["%s=%s" % (k, row[k]) for k in SHOW_FIELDS[sec] if row.get(k)]
