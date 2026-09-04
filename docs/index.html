@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOB Watch By JL</title>
+<title>DOB Watch by JL</title>
 <style>
 :root{
   --ink:#0E1216; --panel:#161B21; --line:#232B33; --line2:#2E3841;
@@ -103,7 +103,9 @@ svg{display:block;width:100%;height:56px;overflow:visible}
 .save{position:sticky;bottom:0;margin-top:20px;background:var(--panel);
   border-top:2px solid var(--warn);padding:12px 16px;display:flex;flex-wrap:wrap;
   gap:10px;align-items:center;font-size:14px}
-.save b{color:var(--warn)}
+.save b{color:var(--warn);flex:0 0 auto}
+.save span{flex:1 1 260px;line-height:1.5}
+.save a.diag{color:var(--warn)}
 .save input[type=text]{width:70px}
 
 .msg{background:var(--panel);border-left:3px solid var(--warn);padding:14px 16px;
@@ -121,7 +123,7 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 <div class="wrap">
 
 <header>
-  <h1>DOB Watch By JL</h1>
+  <h1>DOB Watch by JL</h1>
   <div class="stamp" id="stamp">Loading</div>
 </header>
 
@@ -148,7 +150,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -422,12 +424,47 @@ function callSheet(params){
 const NOT_WIRED = () => !SHEET_URL || SHEET_URL.startsWith("PASTE_");
 
 async function loadStatus(){
-  if (NOT_WIRED()) return;
+  if (NOT_WIRED()) {
+    SAVE_ERR = "SHEET_URL is still the placeholder in index.html";
+    return;
+  }
   try {
     const j = await callSheet({});
     if (j.ok) { STATUS = j.status || {}; SAVE_ERR = ""; }
     else SAVE_ERR = j.error || "the sheet returned an error";
-  } catch (err) { SAVE_ERR = "cannot reach the sheet: " + err.message; }
+  } catch (err) {
+    SAVE_ERR = await diagnose(err);
+  }
+}
+
+/**
+ * JSONP failures give no detail, so fetch the same URL and look at what
+ * actually comes back. Turns "could not reach the sheet" into the reason.
+ */
+async function diagnose(err){
+  const url = SHEET_URL + "?callback=test";
+  try {
+    const r = await fetch(url, {redirect: "follow"});
+    const body = (await r.text()).trim();
+    if (body.startsWith("test(")) {
+      return "the sheet replied correctly but the browser blocked the script tag. "
+           + "Try a different browser or turn off any ad blocker on this page.";
+    }
+    if (body.startsWith("{")) {
+      return "the deployed script is an OLD VERSION: it ignores the callback "
+           + "parameter. In Apps Script go to Deploy, Manage deployments, pencil "
+           + "icon, Version: New version, Deploy.";
+    }
+    if (/<html|sign ?in|accounts\.google/i.test(body)) {
+      return "the URL returns a Google sign-in page. In Manage deployments set "
+           + "\"Who has access\" to Anyone.";
+    }
+    return "unexpected reply from the sheet: " + body.slice(0, 120);
+  } catch (e2) {
+    return "could not reach " + SHEET_URL.slice(0, 60) + "... "
+         + "Open that URL in a tab. If it does not return JSON, the URL in "
+         + "index.html is not the current deployment. (" + err.message + ")";
+  }
 }
 
 async function saveTick(num, resolved){
