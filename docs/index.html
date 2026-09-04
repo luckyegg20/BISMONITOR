@@ -133,7 +133,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "Phttps://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
