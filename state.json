@@ -92,7 +92,8 @@
  "1|309|avenue c": {
   "complaint_ids": [],
   "complaints": 0,
-  "dob_violations": 0
+  "dob_violations": 0,
+  "ecb_violations": 0
  },
  "1|310|first avenue": {
   "complaint_ids": [],
@@ -144,8 +145,8 @@
  },
  "1|420|east 23rd street": {
   "complaint_ids": [
-   "1735367",
-   "1735368"
+   "1735368",
+   "1735367"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -267,12 +268,14 @@
  "1|540|east 20th street": {
   "complaint_ids": [],
   "complaints": 0,
-  "dob_violations": 0
+  "dob_violations": 0,
+  "ecb_violations": 0
  },
  "1|541|east 20th street": {
   "complaint_ids": [],
   "complaints": 0,
-  "dob_violations": 0
+  "dob_violations": 0,
+  "ecb_violations": 0
  },
  "1|545|east 14th street": {
   "complaint_ids": [],
