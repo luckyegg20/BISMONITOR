@@ -122,18 +122,25 @@ def count_opendata(session, bin_number):
         try:
             where = "bin='%s'" % b
             if sec == "complaints":
-                ids, on_file = recent_complaints(session, where)
-                entry.update({"open": len(ids), "total": on_file,
-                              "ids": ids, "error": None})
+                recs, on_file = recent_complaints(session, where)
+                entry.update({"open": len(recs), "total": on_file,
+                              "records": recs,
+                              "ids": [r["num"] for r in recs], "error": None})
                 out[sec] = entry
                 continue
             # bin is text in these datasets; fall back to numeric if that returns nothing
             total = soda_count(session, dataset, where)
             if total == 0:
-                alt = "bin=%s" % b
-                if soda_count(session, dataset, alt) > 0:
-                    where = alt
-                    total = soda_count(session, dataset, where)
+                # Some datasets store bin as a number. Try that shape, but a
+                # rejection just means the field is text and the real answer
+                # is zero, so never let it fail the section.
+                try:
+                    alt = "bin=%s" % b
+                    if soda_count(session, dataset, alt) > 0:
+                        where = alt
+                        total = soda_count(session, dataset, where)
+                except Exception:  # noqa: BLE001
+                    pass
             pre = OPEN_DATASET.get(sec)
             if pre:
                 opened = soda_count(session, pre, where)
@@ -198,40 +205,40 @@ def parse_date(v):
 
 def recent_complaints(session, bin_where):
     """
-    Complaint numbers filed in the last COMPLAINT_WINDOW_DAYS.
+    Complaints filed in the last COMPLAINT_WINDOW_DAYS.
 
     The complaints dataset does not publish disposition codes, so its status
     field lags BIS and cannot be trusted for "open". Filing dates never lag,
     so this counts what was filed instead of what is still open.
-    Returns (ids, total_on_file).
+    Returns (records, total_on_file); records are newest first.
     """
-    rows = soda(session, "eabe-havv",
-                {"$select": "complaint_number,date_entered", "$where": bin_where,
-                 "$limit": 5000})
+    fields = "complaint_number,date_entered,complaint_category,status"
+    try:
+        rows = soda(session, "eabe-havv",
+                    {"$select": fields, "$where": bin_where, "$limit": 5000})
+    except Exception:  # noqa: BLE001
+        rows = soda(session, "eabe-havv",
+                    {"$select": "complaint_number,date_entered",
+                     "$where": bin_where, "$limit": 5000})
     cutoff = (datetime.now(timezone.utc).date()
               - timedelta(days=COMPLAINT_WINDOW_DAYS))
-    ids = []
+    recs, seen = [], set()
     for r in rows:
         d = parse_date(r.get("date_entered"))
-        if d and d >= cutoff:
-            num = str(r.get("complaint_number") or "").strip()
-            if num:
-                ids.append(num)
-    return sorted(set(ids)), len(rows)
-
-
-# Address -> BIN. Tried in order; a building only appears in a dataset if it has
-# records there, so a clean building needs several attempts. (dataset, house field,
-# street field, borough field, borough value)
-BIN_SOURCES = [
-    ("3h2n-5cm9", "house_number", "street", "boro", "1"),
-    ("6bgk-3dad", "house_number", "street", "boro", "1"),
-    ("eabe-havv", "house_number", "house_street", "boro", "1"),
-    ("ic3t-wcy2", "house__", "street_name", "borough", "MANHATTAN"),
-    ("w9ak-ipjd", "house_no", "street_name", "borough", "MANHATTAN"),
-]
-BOROUGH_NAME = {1: "MANHATTAN", 2: "BRONX", 3: "BROOKLYN", 4: "QUEENS",
-                5: "STATEN ISLAND"}
+        num = str(r.get("complaint_number") or "").strip()
+        if not d or d < cutoff or not num or num in seen:
+            continue
+        seen.add(num)
+        recs.append({
+            "num": num,
+            "date": d.isoformat(),
+            "category": str(r.get("complaint_category") or "").strip(),
+            "bis_status": str(r.get("status") or "").strip(),
+            "url": ("https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet"
+                    "?requestid=1&complaintno=" + num),
+        })
+    recs.sort(key=lambda x: x["date"], reverse=True)
+    return recs, len(rows)
 
 
 def resolve_bin(session, building):
@@ -559,6 +566,8 @@ def write_data(results, checked_at, source, sids):
                 "url": s.get("url"),
                 "error": s.get("error"),
             }
+            if sec == "complaints" and isinstance(s.get("records"), list):
+                secs[sec]["records"] = s["records"]
         buildings.append({
             "id": sid,
             "label": r["label"],
