@@ -28,7 +28,7 @@ h1{margin:0;font-size:21px;font-weight:600;letter-spacing:-.01em}
   letter-spacing:-.02em;margin:0 0 8px;max-width:none;text-wrap:balance}
 .headline.quiet{color:var(--dim);font-weight:400}
 .sum{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
-.sum .stat{flex:1 1 150px;background:var(--panel);border-left:3px solid var(--line2);
+.sum .stat{flex:1 1 130px;background:var(--panel);border-left:3px solid var(--line2);
   padding:10px 14px}
 .sum .stat.hit{border-left-color:var(--hot)}
 .sum .stat.many{border-left-color:var(--warn)}
@@ -156,7 +156,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -319,7 +319,16 @@ function render(){
     const cls = n === 0 ? "" : " many";
     const add = fresh[s] ? `<em>+${fresh[s]} new</em> &middot; ` : "";
     return `<div class="stat${cls}"><b>${n}</b><span>${add}${CAPTION[s]}</span></div>`;
-  }).join("");
+  }).join("")
+  // penalties still unpaid more than 3 days after the hearing concluded
+  + (() => {
+      let n = 0;
+      for (const b of DATA.buildings)
+        for (const v of (b.sections.ecb_violations?.records || []))
+          if (v.overdue && !STATUS[v.num]?.resolved) n++;
+      return `<div class="stat${n ? " many" : ""}"><b>${n}</b>` +
+             `<span>penalties unpaid 3+ days</span></div>`;
+    })();
 
   const newBits = SEC.filter(s => fresh[s] > 0)
     .map(s => `${fresh[s]} new ${s === "complaints"
@@ -373,7 +382,7 @@ function render(){
       ${cells}</tr>` + (isOpen ? detailRow(b) : "");
   }).join("");
 
-  app.innerHTML = head + since + `
+  app.innerHTML = head + since + owedBlock + `
   <div class="controls">
     <input type="search" id="q" placeholder="Filter by address or BIN" value="${esc(ui.q)}">
     <select id="sort">
@@ -411,6 +420,15 @@ function render(){
     try { localStorage.setItem("dobwatch_who", WHO); } catch (err) {}
   });
   document.getElementById("reload").addEventListener("click", load);
+
+  app.querySelectorAll(".owed button[data-go]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      expanded = btn.dataset.go;
+      render();
+      const row = app.querySelector(`tr.b[data-id="${CSS.escape(expanded)}"]`);
+      if (row) row.scrollIntoView({behavior: "smooth", block: "center"});
+    });
+  });
 
   app.querySelectorAll(".cx input[type=checkbox]").forEach(cb => {
     cb.addEventListener("click", e => e.stopPropagation());
