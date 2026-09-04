@@ -53,6 +53,7 @@ SHORT_LABEL = {"complaints": "Complaints (30d)", "dob_violations": "Violations-D
 
 TIMEOUT = 40
 COMPLAINT_WINDOW_DAYS = 30   # complaints counted as "recently filed"
+BALANCE_GRACE_DAYS = 3       # days after a hearing before a balance counts as overdue
 
 
 # ----------------------------------------------------------------------
@@ -323,8 +324,15 @@ def ecb_records(session, bin_where, bin_number=""):
             flags.append("HEARING PENDING")
         if h_date and h_date <= today and not h_status:
             flags.append("HEARING PASSED, NO STATUS")
+        # A balance still sitting there days after the hearing concluded is the
+        # one that needs chasing, so it gets its own flag.
+        since = h_date if h_date else parse_date(r.get("issue_date"))
+        overdue = bool(
+            balance_known and balance > 0 and since
+            and since <= today - timedelta(days=BALANCE_GRACE_DAYS)
+        )
         if balance_known and balance > 0:
-            flags.append("BALANCE DUE")
+            flags.append("BALANCE OVERDUE" if overdue else "BALANCE DUE")
         if not flags:
             continue
 
@@ -341,6 +349,7 @@ def ecb_records(session, bin_where, bin_number=""):
             "paid": paid,
             "balance": balance,
             "balance_known": balance_known,
+            "overdue": overdue,
             "hearing_status": h_status,
             "hearing_date": h_date.isoformat() if h_date else "",
             "flags": flags,
