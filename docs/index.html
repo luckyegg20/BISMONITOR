@@ -156,7 +156,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -264,7 +264,7 @@ function detailRow(b){
       const flags = done ? "" : v.flags.map(f =>
         `<span class="flag${f === "OPEN" ? " open" : ""}">${esc(f)}${
           f === "HEARING PENDING" && v.hearing_date ? " " + esc(v.hearing_date) : ""}${
-          f === "BALANCE DUE" ? " " + esc(money(v.balance)) : ""}</span>`).join("");
+          f.startsWith("BALANCE") ? " " + esc(money(v.balance)) : ""}</span>`).join("");
       return `<label>
         <input type="checkbox" data-num="${esc(v.num)}"${done ? " checked" : ""}>
         <span>
@@ -368,7 +368,7 @@ function render(){
       const dd = (d[s] && !adjusted)
         ? `<span class="delta${d[s]<0?" down":""}">${d[s]>0?"+":""}${d[s]}</span>` : "";
       const inner = v.url ? `<a href="${esc(v.url)}">${n}</a>` : n;
-      const tone = n === 0 ? "zero" : (n > 1 ? "many" : "hot");
+      const tone = n === 0 ? "zero" : "many";
       return `<td class="n ${tone}">${inner}
         <span class="of">of ${v.total ?? "?"}</span>${dd}</td>`;
     }).join("");
@@ -381,6 +381,29 @@ function render(){
       <td><span class="chev">${isOpen?"&#9662;":"&#9656;"}</span><span class="name">${esc(b.label)}</span>${sub}</td>
       ${cells}</tr>` + (isOpen ? detailRow(b) : "");
   }).join("");
+
+  // which buildings owe money, and how much
+  const owed = [];
+  let owedTotal = 0;
+  for (const b of DATA.buildings) {
+    const rows = (b.sections.ecb_violations?.records || [])
+      .filter(v => Number(v.balance) > 0 && !STATUS[v.num]?.resolved);
+    if (!rows.length) continue;
+    const sum = rows.reduce((a, v) => a + Number(v.balance || 0), 0);
+    owedTotal += sum;
+    owed.push({id: b.id, label: b.label, n: rows.length, sum,
+               overdue: rows.some(v => v.overdue)});
+  }
+  owed.sort((a, b) => b.sum - a.sum);
+  const cash = n => "$" + Number(n).toLocaleString("en-US", {minimumFractionDigits: 2});
+  const owedBlock = owed.length ? `<div class="owed">
+    <h4>Buildings with an unpaid penalty balance</h4>
+    ${owed.map(o => `<div class="who">
+      <button class="link" data-go="${esc(o.id)}">${esc(o.label)}</button>
+      <span class="amt">${cash(o.sum)} &middot; ${o.n} violation${o.n === 1 ? "" : "s"}${
+        o.overdue ? " &middot; overdue" : ""}</span></div>`).join("")}
+    <div class="tot"><span>Total</span><span class="amt">${cash(owedTotal)}</span></div>
+  </div>` : "";
 
   app.innerHTML = head + since + owedBlock + `
   <div class="controls">
