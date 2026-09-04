@@ -27,6 +27,16 @@ h1{margin:0;font-size:21px;font-weight:600;letter-spacing:-.01em}
 .headline{font-size:clamp(25px,4.6vw,36px);line-height:1.18;font-weight:600;
   letter-spacing:-.02em;margin:0 0 8px;max-width:24ch}
 .headline.quiet{color:var(--dim);font-weight:400}
+.sum{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
+.sum .stat{flex:1 1 150px;background:var(--panel);border-left:3px solid var(--line2);
+  padding:10px 14px}
+.sum .stat.hit{border-left-color:var(--hot)}
+.sum .stat.many{border-left-color:var(--warn)}
+.sum .stat b{display:block;font-size:26px;font-weight:600;line-height:1.1}
+.sum .stat.hit b{color:var(--hot)}
+.sum .stat.many b{color:var(--warn)}
+.sum .stat span{font-size:12px;color:var(--dim)}
+.sum .stat em{font-style:normal;color:var(--hot);font-weight:600}
 .since{font-size:14px;color:var(--dim);margin:0 0 24px}
 
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
@@ -50,6 +60,7 @@ tbody tr.b:hover td,tbody tr.b.open td{background:#131920}
 td{padding:12px 8px 12px 0;font-size:15px;vertical-align:top}
 td.n{text-align:right;padding-right:12px;font-weight:600;font-size:20px}
 td.n.hot{color:var(--hot)}
+td.n.many{color:var(--warn)}
 td.n.zero{color:var(--faint)}
 td.n.na{color:var(--warn)}
 .of{display:block;font-size:11px;color:var(--faint);font-weight:400;margin-top:1px}
@@ -133,7 +144,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -247,13 +258,37 @@ function render(){
   stamp.innerHTML = `Checked <b>${esc(DATA.checked_at)}</b> via ${DATA.source === "bis" ? "BIS" : "NYC Open Data"}`;
 
   const movedList = DATA.buildings.filter(b => Object.values(deltas(b)).some(d => d !== 0));
-  const total = openTotal();
-  const head = movedList.length
-    ? `<p class="headline">${total} open record${total===1?"":"s"}. ${movedList.length} building${movedList.length===1?"":"s"} moved.</p>`
-    : `<p class="headline quiet">${total} open record${total===1?"":"s"}. Nothing moved.</p>`;
+
+  // portfolio totals, and how many of each arrived since the last check
+  const tot = {}, fresh = {};
+  for (const s of SEC) { tot[s] = 0; fresh[s] = 0; }
+  for (const b of DATA.buildings) {
+    const d = deltas(b);
+    for (const s of SEC) {
+      const v = openCount(b, s);
+      if (v !== null) tot[s] += v;
+      if (d[s] > 0) fresh[s] += d[s];
+    }
+  }
+  const CAPTION = {complaints:"complaints to verify", dob_violations:"open Violations-DOB",
+                   ecb_violations:"open Violations-OATH/ECB"};
+  const stats = SEC.map(s => {
+    const n = tot[s];
+    const cls = n === 0 ? "" : " many";
+    const add = fresh[s] ? `<em>+${fresh[s]} new</em> &middot; ` : "";
+    return `<div class="stat${cls}"><b>${n}</b><span>${add}${CAPTION[s]}</span></div>`;
+  }).join("");
+
+  const newBits = SEC.filter(s => fresh[s] > 0)
+    .map(s => `${fresh[s]} new ${s === "complaints"
+        ? (fresh[s] === 1 ? "complaint" : "complaints") : NAME[s]}`);
+  const head = (newBits.length
+    ? `<p class="headline">${newBits.join(", ")} since the last check.</p>`
+    : `<p class="headline quiet">Nothing new since the last check.</p>`)
+    + `<div class="sum">${stats}</div>`;
   const since = (DATA.history||[]).length > 1
-    ? `<p class="since">Compared against the check before this one. ${DATA.history.length} readings on file.</p>`
-    : `<p class="since">First reading. Movement shows from the next check.</p>`;
+    ? `<p class="since">Compared against the previous check. ${DATA.history.length} readings on file.</p>`
+    : `<p class="since">First reading. New items show from the next check.</p>`;
 
   const q = ui.q.trim().toLowerCase();
   let rows = DATA.buildings.filter(b =>
@@ -282,7 +317,8 @@ function render(){
       const dd = (d[s] && !adjusted)
         ? `<span class="delta${d[s]<0?" down":""}">${d[s]>0?"+":""}${d[s]}</span>` : "";
       const inner = v.url ? `<a href="${esc(v.url)}">${n}</a>` : n;
-      return `<td class="n ${n?"hot":"zero"}">${inner}
+      const tone = n === 0 ? "zero" : (n > 1 ? "many" : "hot");
+      return `<td class="n ${tone}">${inner}
         <span class="of">of ${v.total ?? "?"}</span>${dd}</td>`;
     }).join("");
     const sub = b.error
