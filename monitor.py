@@ -186,6 +186,8 @@ def explain(session, bin_number, label):
         if not rows:
             print("  none")
             continue
+        if sec == "ecb_violations" and rows:
+            print("  fields published: %s" % ", ".join(sorted(rows[0].keys())))
         for row in rows:
             bits = ["%s=%s" % (k, row[k]) for k in SHOW_FIELDS[sec] if row.get(k)]
             extra = [k for k in row if k not in SHOW_FIELDS[sec]
@@ -300,10 +302,19 @@ def ecb_records(session, bin_where):
         h_date = parse_date(first_field(r, HEARING_DATE_FIELDS))
         h_status = first_field(r, HEARING_STATUS_FIELDS)
         imposed = money(r.get("penality_imposed") or r.get("penalty_imposed"))
-        paid = money(field_like(r, "paid"))
-        balance = money(field_like(r, "balance"))
-        if not balance:
-            balance = max(imposed - paid, 0.0)
+
+        # Payment data may not exist in this dataset at all. A missing field is
+        # unknown, not zero paid, so only claim a balance when the numbers are
+        # actually published. Otherwise BIS is the only place that knows.
+        raw_balance = field_like(r, "balance")
+        raw_paid = field_like(r, "paid")
+        if raw_balance != "":
+            balance, balance_known = money(raw_balance), True
+        elif raw_paid != "":
+            balance, balance_known = max(imposed - money(raw_paid), 0.0), True
+        else:
+            balance, balance_known = 0.0, False
+        paid = money(raw_paid) if raw_paid != "" else None
 
         flags = []
         if "ACTIVE" in status:
@@ -312,7 +323,7 @@ def ecb_records(session, bin_where):
             flags.append("HEARING PENDING")
         if h_date and h_date <= today and not h_status:
             flags.append("HEARING PASSED, NO STATUS")
-        if balance > 0:
+        if balance_known and balance > 0:
             flags.append("BALANCE DUE")
         if not flags:
             continue
@@ -326,6 +337,7 @@ def ecb_records(session, bin_where):
             "imposed": imposed,
             "paid": paid,
             "balance": balance,
+            "balance_known": balance_known,
             "hearing_status": h_status,
             "hearing_date": h_date.isoformat() if h_date else "",
             "flags": flags,
