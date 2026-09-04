@@ -318,12 +318,16 @@ def ecb_records(session, bin_where, bin_number=""):
             balance, balance_known = 0.0, False
         paid = money(raw_paid) if raw_paid != "" else None
 
+        # DOB says it is done and nothing is owed, so it is done. A blank hearing
+        # status on a settled violation is just missing paperwork, not a problem.
+        settled = ("ACTIVE" not in status) and not (balance_known and balance > 0)
+
         flags = []
         if "ACTIVE" in status:
             flags.append("OPEN")
         if h_date and h_date > today:
             flags.append("HEARING PENDING")
-        if h_date and h_date <= today and not h_status:
+        if h_date and h_date <= today and not h_status and not settled:
             flags.append("HEARING PASSED, NO STATUS")
         # A balance still sitting there days after the hearing concluded is the
         # one that needs chasing, so it gets its own flag.
@@ -572,10 +576,7 @@ def check_building(session, building, source):
             if not result["bin"]:
                 result["bin"] = resolve_bin(session, building)
                 if result["bin"]:
-                    building["bin"] = result["bin"]
                     result["bin_learned"] = True
-                    print("   resolved BIN %s, saving it to buildings.json"
-                          % result["bin"])
             if not result["bin"]:
                 raise RuntimeError(
                     "no BIN found by address. Open the profile link on the "
@@ -847,10 +848,16 @@ def main():
             if e:
                 print("   %s: %s" % (SHORT_LABEL[sec], e))
 
-    learned = sum(1 for r in results if r.get("bin_learned"))
+    # buildings.json is yours, not the script's. Writing it from a workflow run
+    # risks overwriting edits you made in the browser while a run was in flight,
+    # so resolved BINs are only printed for you to paste in.
+    learned = [(r["label"], r["bin"]) for r in results if r.get("bin_learned")]
     if learned:
-        BUILDINGS_FILE.write_text(json.dumps(buildings, indent=2) + "\n")
-        print("buildings.json updated with %d newly resolved BIN(s)" % learned)
+        print("\nBINs resolved by address this run. Paste these into "
+              "buildings.json so the lookup stops repeating:")
+        for label, b in learned:
+            print('  %-38s "bin": "%s"' % (label, b))
+        print()
 
     write_data(results, checked_at, args.source, sids)
 
