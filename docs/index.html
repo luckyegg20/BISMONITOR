@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOB watch by JL</title>
+<title>DOB watch</title>
 <style>
 :root{
   --ink:#0E1216; --panel:#161B21; --line:#232B33; --line2:#2E3841;
@@ -24,8 +24,8 @@ h1{margin:0;font-size:21px;font-weight:600;letter-spacing:-.01em}
 .stamp{font-size:13px;color:var(--dim)}
 .stamp b{color:var(--text);font-weight:600}
 
-.headline{font-size:clamp(25px,4.6vw,36px);line-height:1.18;font-weight:600;
-  letter-spacing:-.02em;margin:0 0 8px;max-width:24ch}
+.headline{font-size:clamp(19px,3.1vw,29px);line-height:1.25;font-weight:600;
+  letter-spacing:-.02em;margin:0 0 8px;max-width:none;text-wrap:balance}
 .headline.quiet{color:var(--dim);font-weight:400}
 .sum{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
 .sum .stat{flex:1 1 150px;background:var(--panel);border-left:3px solid var(--line2);
@@ -117,7 +117,7 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 <div class="wrap">
 
 <header>
-  <h1>DOB watch by JL</h1>
+  <h1>DOB watch</h1>
   <div class="stamp" id="stamp">Loading</div>
 </header>
 
@@ -144,7 +144,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
