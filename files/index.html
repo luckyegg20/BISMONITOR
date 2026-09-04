@@ -144,6 +144,19 @@ const src = new URLSearchParams(location.search).get("src") || "data.json";
 
 function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
+/**
+ * Complaints still needing attention: filed in the window and not yet ticked
+ * as verified. The other two sections use the count as published.
+ */
+function openCount(b, sec){
+  const s = b.sections[sec];
+  if (typeof s?.open !== "number") return null;
+  if (sec !== "complaints") return s.open;
+  const recs = s.records;
+  if (!Array.isArray(recs)) return s.open;
+  return recs.filter(r => !STATUS[r.num]?.resolved).length;
+}
+
 function prevCounts(){
   const h = DATA.history || [];
   return h.length > 1 ? h[h.length-2].counts || {} : {};
@@ -155,7 +168,7 @@ function seriesFor(id, sec){
 function openTotal(){
   let n = 0;
   for (const b of DATA.buildings)
-    for (const s of SEC) if (typeof b.sections[s]?.open === "number") n += b.sections[s].open;
+    for (const s of SEC) { const v = openCount(b, s); if (v !== null) n += v; }
   return n;
 }
 
@@ -188,9 +201,11 @@ function sparkline(vals){
 
 function detailRow(b){
   const charts = SEC.map(s => {
-    const v = b.sections[s];
-    const n = typeof v?.open === "number" ? v.open : "n/a";
-    return `<div class="chart"><div class="cap"><b>${n}</b> ${esc(NAME[s])} ${esc(VERB[s])}</div>
+    const n = openCount(b, s);
+    const cap = (s === "complaints" && Array.isArray(b.sections[s]?.records))
+      ? `<b>${n}</b> of ${b.sections[s].records.length} filed in last 30 days still to verify`
+      : `<b>${n === null ? "n/a" : n}</b> ${esc(NAME[s])} ${esc(VERB[s])}`;
+    return `<div class="chart"><div class="cap">${cap}</div>
       ${sparkline(seriesFor(b.id, s))}</div>`;
   }).join("");
   const recs = b.sections.complaints?.records || [];
@@ -244,7 +259,7 @@ function render(){
   let rows = DATA.buildings.filter(b =>
     !q || b.label.toLowerCase().includes(q) || String(b.bin||"").includes(q));
 
-  const openOf = (b,s) => typeof b.sections[s]?.open === "number" ? b.sections[s].open : -1;
+  const openOf = (b,s) => { const v = openCount(b, s); return v === null ? -1 : v; };
   const biggest = b => Math.max(...Object.values(deltas(b)).map(Math.abs));
   const sorters = {
     moved: (a,b) => biggest(b) - biggest(a) || a.label.localeCompare(b.label),
@@ -259,10 +274,15 @@ function render(){
     const d = deltas(b);
     const cells = SEC.map(s => {
       const v = b.sections[s];
-      if (typeof v?.open !== "number") return `<td class="n na">n/a</td>`;
-      const dd = d[s]
+      const n = openCount(b, s);
+      if (n === null) return `<td class="n na">n/a</td>`;
+      // hide the delta on complaints once ticks have adjusted the number,
+      // otherwise you get a confusing "0 (+1)"
+      const adjusted = s === "complaints" && n !== v.open;
+      const dd = (d[s] && !adjusted)
         ? `<span class="delta${d[s]<0?" down":""}">${d[s]>0?"+":""}${d[s]}</span>` : "";
-      return `<td class="n ${v.open?"hot":"zero"}">${v.open}
+      const inner = v.url ? `<a href="${esc(v.url)}">${n}</a>` : n;
+      return `<td class="n ${n?"hot":"zero"}">${inner}
         <span class="of">of ${v.total ?? "?"}</span>${dd}</td>`;
     }).join("");
     const sub = b.error
@@ -335,31 +355,49 @@ function render(){
   });
 }
 
+/**
+ * Apps Script sends no CORS header, so fetch() to it always fails. JSONP loads
+ * the reply as a script tag, which browsers allow across origins. Reads and
+ * writes both go through here.
+ */
+let jsonpSeq = 0;
+function callSheet(params){
+  return new Promise((resolve, reject) => {
+    const cb = "dobwatch_cb_" + (++jsonpSeq);
+    const q = new URLSearchParams({...params, callback: cb, t: Date.now()});
+    const s = document.createElement("script");
+    const timer = setTimeout(() => { cleanup(); reject(new Error("timed out")); }, 20000);
+    function cleanup(){
+      clearTimeout(timer);
+      delete window[cb];
+      if (s.parentNode) s.parentNode.removeChild(s);
+    }
+    window[cb] = data => { cleanup(); resolve(data); };
+    s.onerror = () => { cleanup(); reject(new Error("could not reach the sheet")); };
+    s.src = SHEET_URL + "?" + q.toString();
+    document.head.appendChild(s);
+  });
+}
+
+const NOT_WIRED = () => !SHEET_URL || SHEET_URL.startsWith("PASTE_");
+
 async function loadStatus(){
-  if (!SHEET_URL || SHEET_URL.startsWith("PASTE_")) return;   // not wired up yet
+  if (NOT_WIRED()) return;
   try {
-    const r = await fetch(SHEET_URL + "?t=" + Date.now(), {cache:"no-store"});
-    const j = await r.json();
+    const j = await callSheet({});
     if (j.ok) { STATUS = j.status || {}; SAVE_ERR = ""; }
-    else SAVE_ERR = j.error || "sheet returned an error";
+    else SAVE_ERR = j.error || "the sheet returned an error";
   } catch (err) { SAVE_ERR = "cannot reach the sheet: " + err.message; }
 }
 
 async function saveTick(num, resolved){
-  if (!SHEET_URL || SHEET_URL.startsWith("PASTE_")) {
+  if (NOT_WIRED()) {
     SAVE_ERR = "SHEET_URL is not set in index.html, so nothing was saved";
     render(); return;
   }
   SAVING++; SAVE_ERR = ""; render();
   try {
-    // text/plain keeps this a simple request; Apps Script cannot answer
-    // a CORS preflight, so a JSON content type would be rejected
-    const r = await fetch(SHEET_URL, {
-      method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"},
-      body: JSON.stringify({num, resolved, by: WHO})
-    });
-    const j = await r.json();
+    const j = await callSheet({num, resolved: String(resolved), by: WHO});
     if (j.ok) STATUS = j.status || {};
     else SAVE_ERR = j.error || "the sheet refused the write";
   } catch (err) {
