@@ -143,7 +143,7 @@ def count_opendata(session, bin_number):
                     pass
             if sec == "ecb_violations":
                 try:
-                    entry["records"] = ecb_records(session, where)
+                    entry["records"] = ecb_records(session, where, b)
                 except Exception:  # noqa: BLE001
                     pass          # listing is a bonus; never fail the count
             pre = OPEN_DATASET.get(sec)
@@ -279,7 +279,7 @@ def field_like(row, *words):
     return ""
 
 
-def ecb_records(session, bin_where):
+def ecb_records(session, bin_where, bin_number=""):
     """
     OATH/ECB violations that still need attention.
 
@@ -329,8 +329,11 @@ def ecb_records(session, bin_where):
             continue
 
         issued = parse_date(r.get("issue_date"))
+        rbin = str(r.get("bin") or bin_number or "").strip()
         recs.append({
             "num": num,
+            "url": ("https://a810-bisweb.nyc.gov/bisweb/ECBQueryByNumberServlet"
+                    "?requestid=1&allbin=%s&ecbin=%s" % (rbin, num)),
             "date": issued.isoformat() if issued else "",
             "status": status,
             "severity": str(r.get("severity") or "").strip(),
