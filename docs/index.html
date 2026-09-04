@@ -99,6 +99,12 @@ svg{display:block;width:100%;height:56px;overflow:visible}
 .cx a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line2)}
 .cx a:hover{color:var(--text)}
 .cx .done{color:var(--cool);font-weight:600;font-size:12px}
+.cx .row{display:flex;gap:10px;align-items:flex-start;padding:7px 0;
+  border-bottom:1px solid var(--line);font-size:14px}
+.cx .row:last-of-type{border-bottom:0}
+.cx .flag{color:var(--warn);font-weight:600;font-size:11px;letter-spacing:.02em;
+  border:1px solid var(--warn);padding:0 4px;margin-right:4px;white-space:nowrap}
+.cx .flag.open{color:var(--hot);border-color:var(--hot)}
 .cx .todo{color:var(--warn);font-weight:600;font-size:12px}
 .save{position:sticky;bottom:0;margin-top:20px;background:var(--panel);
   border-top:2px solid var(--warn);padding:12px 16px;display:flex;flex-wrap:wrap;
@@ -150,7 +156,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -168,10 +174,13 @@ function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt
 function openCount(b, sec){
   const s = b.sections[sec];
   if (typeof s?.open !== "number") return null;
-  if (sec !== "complaints") return s.open;
   const recs = s.records;
   if (!Array.isArray(recs)) return s.open;
-  return recs.filter(r => !STATUS[r.num]?.resolved).length;
+  // complaints and OATH/ECB are both worklists: a row drops out once someone
+  // has checked it against BIS and ticked it
+  if (sec === "complaints" || sec === "ecb_violations")
+    return recs.filter(r => !STATUS[r.num]?.resolved).length;
+  return s.open;
 }
 
 function prevCounts(){
@@ -219,8 +228,10 @@ function sparkline(vals){
 function detailRow(b){
   const charts = SEC.map(s => {
     const n = openCount(b, s);
-    const cap = (s === "complaints" && Array.isArray(b.sections[s]?.records))
-      ? `<b>${n}</b> of ${b.sections[s].records.length} filed in last 30 days still to verify`
+    const recs = b.sections[s]?.records;
+    const cap = Array.isArray(recs)
+      ? `<b>${n}</b> of ${recs.length} ${s === "complaints"
+            ? "filed in last 30 days still to verify" : "OATH/ECB still to verify"}`
       : `<b>${n === null ? "n/a" : n}</b> ${esc(NAME[s])} ${esc(VERB[s])}`;
     return `<div class="chart"><div class="cap">${cap}</div>
       ${sparkline(seriesFor(b.id, s))}</div>`;
@@ -243,6 +254,30 @@ function detailRow(b){
     }).join("")}
   </div>` : "";
 
+  const ecb = b.sections.ecb_violations?.records || [];
+  const money = n => "$" + Number(n || 0).toLocaleString("en-US", {minimumFractionDigits: 2});
+  const ex = ecb.length ? `<div class="cx">
+    <h4>OATH/ECB violations needing attention &mdash; tick once you have checked BIS</h4>
+    ${ecb.map(v => {
+      const st = STATUS[v.num];
+      const done = st && st.resolved;
+      const flags = done ? "" : v.flags.map(f =>
+        `<span class="flag${f === "OPEN" ? " open" : ""}">${esc(f)}${
+          f === "HEARING PENDING" && v.hearing_date ? " " + esc(v.hearing_date) : ""}${
+          f === "BALANCE DUE" ? " " + esc(money(v.balance)) : ""}</span>`).join("");
+      return `<label>
+        <input type="checkbox" data-num="${esc(v.num)}"${done ? " checked" : ""}>
+        <span>
+          <span class="num">${esc(v.num)}</span>
+          ${done ? `<span class="done">CONFIRMED RESOLVED</span>` : flags}
+          <span class="meta"> &middot; DOB says ${esc(v.status || "?")} &middot; issued ${esc(v.date || "?")}${
+            v.severity ? " &middot; " + esc(v.severity) : ""}${
+            v.hearing_date ? " &middot; hearing " + esc(v.hearing_date) + (v.hearing_status ? " (" + esc(v.hearing_status.toLowerCase()) + ")" : " (no status)") : ""}${
+            done && st.by ? " &middot; by " + esc(st.by) : ""}</span>
+        </span></label>`;
+    }).join("")}
+  </div>` : "";
+
   const links = SEC.filter(s => b.sections[s]?.url)
     .map(s => `<a href="${esc(b.sections[s].url)}" target="_blank" rel="noopener">${esc(NAME[s])} on BIS</a>`)
     .join("");
@@ -255,7 +290,7 @@ function detailRow(b){
     <div class="charts">${charts}</div>
     ${errs ? `<p class="flat" style="color:var(--warn)">${esc(errs)}</p>` : ""}
     <div class="links">${prof}${links}</div>
-    ${cx}
+    ${cx}${ex}
   </div></td></tr>`;
 }
 
@@ -277,7 +312,7 @@ function render(){
     }
   }
   const CAPTION = {complaints:"complaints to verify", dob_violations:"open Violations-DOB",
-                   ecb_violations:"open Violations-OATH/ECB"};
+                   ecb_violations:"OATH/ECB to verify"};
   const stats = SEC.map(s => {
     const n = tot[s];
     const cls = n === 0 ? "" : " many";
