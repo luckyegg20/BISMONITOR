@@ -141,6 +141,11 @@ def count_opendata(session, bin_number):
                         total = soda_count(session, dataset, where)
                 except Exception:  # noqa: BLE001
                     pass
+            if sec == "ecb_violations":
+                try:
+                    entry["records"] = ecb_records(session, where)
+                except Exception:  # noqa: BLE001
+                    pass          # listing is a bonus; never fail the count
             pre = OPEN_DATASET.get(sec)
             if pre:
                 opened = soda_count(session, pre, where)
@@ -239,6 +244,94 @@ def recent_complaints(session, bin_where):
         })
     recs.sort(key=lambda x: x["date"], reverse=True)
     return recs, len(rows)
+
+
+HEARING_DATE_FIELDS = ["hearing_date", "scheduled_hearing_date", "hearing_dt"]
+HEARING_STATUS_FIELDS = ["hearing_status", "ecb_hearing_status"]
+PENDING_WORDS = re.compile(r"PENDING|SCHEDUL|ADJOURN|DEFAULT", re.I)
+
+
+def first_field(row, names):
+    for n in names:
+        v = row.get(n)
+        if v not in (None, ""):
+            return str(v).strip()
+    return ""
+
+
+def money(v):
+    """Parse a dollar figure that may arrive as text, blank, or a number."""
+    s = re.sub(r"[^0-9.\-]", "", str(v or ""))
+    try:
+        return float(s) if s not in ("", "-", ".") else 0.0
+    except ValueError:
+        return 0.0
+
+
+def field_like(row, *words):
+    """First value whose key contains all of the given words."""
+    for k, v in row.items():
+        low = k.lower()
+        if all(w in low for w in words) and v not in (None, ""):
+            return v
+    return ""
+
+
+def ecb_records(session, bin_where):
+    """
+    OATH/ECB violations that still need attention.
+
+    DOB can mark a violation RESOLVED while a penalty sits unpaid or a hearing
+    passed with no status recorded, so status alone is not enough. Each of
+    these raises a flag:
+      - the violation status is ACTIVE
+      - a hearing is scheduled ahead
+      - the hearing date has passed and no hearing status was recorded
+      - a penalty balance is outstanding
+    """
+    rows = soda(session, "6bgk-3dad", {"$where": bin_where, "$limit": 5000})
+    today = datetime.now(timezone.utc).date()
+    recs = []
+    for r in rows:
+        num = str(r.get("ecb_violation_number") or "").strip()
+        if not num:
+            continue
+        status = str(r.get("ecb_violation_status") or "").strip().upper()
+        h_date = parse_date(first_field(r, HEARING_DATE_FIELDS))
+        h_status = first_field(r, HEARING_STATUS_FIELDS)
+        imposed = money(r.get("penality_imposed") or r.get("penalty_imposed"))
+        paid = money(field_like(r, "paid"))
+        balance = money(field_like(r, "balance"))
+        if not balance:
+            balance = max(imposed - paid, 0.0)
+
+        flags = []
+        if "ACTIVE" in status:
+            flags.append("OPEN")
+        if h_date and h_date > today:
+            flags.append("HEARING PENDING")
+        if h_date and h_date <= today and not h_status:
+            flags.append("HEARING PASSED, NO STATUS")
+        if balance > 0:
+            flags.append("BALANCE DUE")
+        if not flags:
+            continue
+
+        issued = parse_date(r.get("issue_date"))
+        recs.append({
+            "num": num,
+            "date": issued.isoformat() if issued else "",
+            "status": status,
+            "severity": str(r.get("severity") or "").strip(),
+            "imposed": imposed,
+            "paid": paid,
+            "balance": balance,
+            "hearing_status": h_status,
+            "hearing_date": h_date.isoformat() if h_date else "",
+            "flags": flags,
+        })
+    recs.sort(key=lambda x: (x["hearing_date"] or "9999", x["date"]))
+    return recs
 
 
 def resolve_bin(session, building):
@@ -566,7 +659,7 @@ def write_data(results, checked_at, source, sids):
                 "url": s.get("url"),
                 "error": s.get("error"),
             }
-            if sec == "complaints" and isinstance(s.get("records"), list):
+            if isinstance(s.get("records"), list):
                 secs[sec]["records"] = s["records"]
         buildings.append({
             "id": sid,
