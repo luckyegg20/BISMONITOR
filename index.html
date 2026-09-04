@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOB watch</title>
+<title>DOB Watch by JL</title>
 <style>
 :root{
   --ink:#0E1216; --panel:#161B21; --line:#232B33; --line2:#2E3841;
@@ -24,9 +24,19 @@ h1{margin:0;font-size:21px;font-weight:600;letter-spacing:-.01em}
 .stamp{font-size:13px;color:var(--dim)}
 .stamp b{color:var(--text);font-weight:600}
 
-.headline{font-size:clamp(25px,4.6vw,36px);line-height:1.18;font-weight:600;
-  letter-spacing:-.02em;margin:0 0 8px;max-width:24ch}
+.headline{font-size:clamp(19px,3.1vw,29px);line-height:1.25;font-weight:600;
+  letter-spacing:-.02em;margin:0 0 8px;max-width:none;text-wrap:balance}
 .headline.quiet{color:var(--dim);font-weight:400}
+.sum{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
+.sum .stat{flex:1 1 150px;background:var(--panel);border-left:3px solid var(--line2);
+  padding:10px 14px}
+.sum .stat.hit{border-left-color:var(--hot)}
+.sum .stat.many{border-left-color:var(--warn)}
+.sum .stat b{display:block;font-size:26px;font-weight:600;line-height:1.1}
+.sum .stat.hit b{color:var(--hot)}
+.sum .stat.many b{color:var(--warn)}
+.sum .stat span{font-size:12px;color:var(--dim)}
+.sum .stat em{font-style:normal;color:var(--hot);font-weight:600}
 .since{font-size:14px;color:var(--dim);margin:0 0 24px}
 
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
@@ -49,7 +59,12 @@ tbody tr.b{border-bottom:1px solid var(--line);cursor:pointer}
 tbody tr.b:hover td,tbody tr.b.open td{background:#131920}
 td{padding:12px 8px 12px 0;font-size:15px;vertical-align:top}
 td.n{text-align:right;padding-right:12px;font-weight:600;font-size:20px}
+/* inherit, so a cell's tier colour carries through to the link inside it */
+td a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line2)}
+td a:hover,td a:focus{border-bottom-color:currentColor}
+td a:visited{color:inherit}
 td.n.hot{color:var(--hot)}
+td.n.many{color:var(--warn)}
 td.n.zero{color:var(--faint)}
 td.n.na{color:var(--warn)}
 .of{display:block;font-size:11px;color:var(--faint);font-weight:400;margin-top:1px}
@@ -84,11 +99,19 @@ svg{display:block;width:100%;height:56px;overflow:visible}
 .cx a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line2)}
 .cx a:hover{color:var(--text)}
 .cx .done{color:var(--cool);font-weight:600;font-size:12px}
+.cx .row{display:flex;gap:10px;align-items:flex-start;padding:7px 0;
+  border-bottom:1px solid var(--line);font-size:14px}
+.cx .row:last-of-type{border-bottom:0}
+.cx .flag{color:var(--warn);font-weight:600;font-size:11px;letter-spacing:.02em;
+  border:1px solid var(--warn);padding:0 4px;margin-right:4px;white-space:nowrap}
+.cx .flag.open{color:var(--hot);border-color:var(--hot)}
 .cx .todo{color:var(--warn);font-weight:600;font-size:12px}
 .save{position:sticky;bottom:0;margin-top:20px;background:var(--panel);
   border-top:2px solid var(--warn);padding:12px 16px;display:flex;flex-wrap:wrap;
   gap:10px;align-items:center;font-size:14px}
-.save b{color:var(--warn)}
+.save b{color:var(--warn);flex:0 0 auto}
+.save span{flex:1 1 260px;line-height:1.5}
+.save a.diag{color:var(--warn)}
 .save input[type=text]{width:70px}
 
 .msg{background:var(--panel);border-left:3px solid var(--warn);padding:14px 16px;
@@ -106,7 +129,7 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 <div class="wrap">
 
 <header>
-  <h1>DOB watch</h1>
+  <h1>DOB Watch by JL</h1>
   <div class="stamp" id="stamp">Loading</div>
 </header>
 
@@ -133,7 +156,7 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
@@ -151,10 +174,13 @@ function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt
 function openCount(b, sec){
   const s = b.sections[sec];
   if (typeof s?.open !== "number") return null;
-  if (sec !== "complaints") return s.open;
   const recs = s.records;
   if (!Array.isArray(recs)) return s.open;
-  return recs.filter(r => !STATUS[r.num]?.resolved).length;
+  // complaints and OATH/ECB are both worklists: a row drops out once someone
+  // has checked it against BIS and ticked it
+  if (sec === "complaints" || sec === "ecb_violations")
+    return recs.filter(r => !STATUS[r.num]?.resolved).length;
+  return s.open;
 }
 
 function prevCounts(){
@@ -202,8 +228,10 @@ function sparkline(vals){
 function detailRow(b){
   const charts = SEC.map(s => {
     const n = openCount(b, s);
-    const cap = (s === "complaints" && Array.isArray(b.sections[s]?.records))
-      ? `<b>${n}</b> of ${b.sections[s].records.length} filed in last 30 days still to verify`
+    const recs = b.sections[s]?.records;
+    const cap = Array.isArray(recs)
+      ? `<b>${n}</b> of ${recs.length} ${s === "complaints"
+            ? "filed in last 30 days still to verify" : "OATH/ECB still to verify"}`
       : `<b>${n === null ? "n/a" : n}</b> ${esc(NAME[s])} ${esc(VERB[s])}`;
     return `<div class="chart"><div class="cap">${cap}</div>
       ${sparkline(seriesFor(b.id, s))}</div>`;
@@ -226,6 +254,30 @@ function detailRow(b){
     }).join("")}
   </div>` : "";
 
+  const ecb = b.sections.ecb_violations?.records || [];
+  const money = n => "$" + Number(n || 0).toLocaleString("en-US", {minimumFractionDigits: 2});
+  const ex = ecb.length ? `<div class="cx">
+    <h4>OATH/ECB violations needing attention &mdash; tick once you have checked BIS</h4>
+    ${ecb.map(v => {
+      const st = STATUS[v.num];
+      const done = st && st.resolved;
+      const flags = done ? "" : v.flags.map(f =>
+        `<span class="flag${f === "OPEN" ? " open" : ""}">${esc(f)}${
+          f === "HEARING PENDING" && v.hearing_date ? " " + esc(v.hearing_date) : ""}${
+          f === "BALANCE DUE" ? " " + esc(money(v.balance)) : ""}</span>`).join("");
+      return `<label>
+        <input type="checkbox" data-num="${esc(v.num)}"${done ? " checked" : ""}>
+        <span>
+          <span class="num">${esc(v.num)}</span>
+          ${done ? `<span class="done">CONFIRMED RESOLVED</span>` : flags}
+          <span class="meta"> &middot; DOB says ${esc(v.status || "?")} &middot; issued ${esc(v.date || "?")}${
+            v.severity ? " &middot; " + esc(v.severity) : ""}${
+            v.hearing_date ? " &middot; hearing " + esc(v.hearing_date) + (v.hearing_status ? " (" + esc(v.hearing_status.toLowerCase()) + ")" : " (no status)") : ""}${
+            done && st.by ? " &middot; by " + esc(st.by) : ""}</span>
+        </span></label>`;
+    }).join("")}
+  </div>` : "";
+
   const links = SEC.filter(s => b.sections[s]?.url)
     .map(s => `<a href="${esc(b.sections[s].url)}" target="_blank" rel="noopener">${esc(NAME[s])} on BIS</a>`)
     .join("");
@@ -238,7 +290,7 @@ function detailRow(b){
     <div class="charts">${charts}</div>
     ${errs ? `<p class="flat" style="color:var(--warn)">${esc(errs)}</p>` : ""}
     <div class="links">${prof}${links}</div>
-    ${cx}
+    ${cx}${ex}
   </div></td></tr>`;
 }
 
@@ -247,13 +299,37 @@ function render(){
   stamp.innerHTML = `Checked <b>${esc(DATA.checked_at)}</b> via ${DATA.source === "bis" ? "BIS" : "NYC Open Data"}`;
 
   const movedList = DATA.buildings.filter(b => Object.values(deltas(b)).some(d => d !== 0));
-  const total = openTotal();
-  const head = movedList.length
-    ? `<p class="headline">${total} open record${total===1?"":"s"}. ${movedList.length} building${movedList.length===1?"":"s"} moved.</p>`
-    : `<p class="headline quiet">${total} open record${total===1?"":"s"}. Nothing moved.</p>`;
+
+  // portfolio totals, and how many of each arrived since the last check
+  const tot = {}, fresh = {};
+  for (const s of SEC) { tot[s] = 0; fresh[s] = 0; }
+  for (const b of DATA.buildings) {
+    const d = deltas(b);
+    for (const s of SEC) {
+      const v = openCount(b, s);
+      if (v !== null) tot[s] += v;
+      if (d[s] > 0) fresh[s] += d[s];
+    }
+  }
+  const CAPTION = {complaints:"complaints to verify", dob_violations:"open Violations-DOB",
+                   ecb_violations:"OATH/ECB to verify"};
+  const stats = SEC.map(s => {
+    const n = tot[s];
+    const cls = n === 0 ? "" : " many";
+    const add = fresh[s] ? `<em>+${fresh[s]} new</em> &middot; ` : "";
+    return `<div class="stat${cls}"><b>${n}</b><span>${add}${CAPTION[s]}</span></div>`;
+  }).join("");
+
+  const newBits = SEC.filter(s => fresh[s] > 0)
+    .map(s => `${fresh[s]} new ${s === "complaints"
+        ? (fresh[s] === 1 ? "complaint" : "complaints") : NAME[s]}`);
+  const head = (newBits.length
+    ? `<p class="headline">${newBits.join(", ")} since the last check.</p>`
+    : `<p class="headline quiet">Nothing new since the last check.</p>`)
+    + `<div class="sum">${stats}</div>`;
   const since = (DATA.history||[]).length > 1
-    ? `<p class="since">Compared against the check before this one. ${DATA.history.length} readings on file.</p>`
-    : `<p class="since">First reading. Movement shows from the next check.</p>`;
+    ? `<p class="since">Compared against the previous check. ${DATA.history.length} readings on file.</p>`
+    : `<p class="since">First reading. New items show from the next check.</p>`;
 
   const q = ui.q.trim().toLowerCase();
   let rows = DATA.buildings.filter(b =>
@@ -282,7 +358,8 @@ function render(){
       const dd = (d[s] && !adjusted)
         ? `<span class="delta${d[s]<0?" down":""}">${d[s]>0?"+":""}${d[s]}</span>` : "";
       const inner = v.url ? `<a href="${esc(v.url)}">${n}</a>` : n;
-      return `<td class="n ${n?"hot":"zero"}">${inner}
+      const tone = n === 0 ? "zero" : (n > 1 ? "many" : "hot");
+      return `<td class="n ${tone}">${inner}
         <span class="of">of ${v.total ?? "?"}</span>${dd}</td>`;
     }).join("");
     const sub = b.error
@@ -361,7 +438,28 @@ function render(){
  * writes both go through here.
  */
 let jsonpSeq = 0;
-function callSheet(params){
+
+/**
+ * Talk to the Apps Script web app. Reads and writes both go through a plain
+ * GET, which is a simple request and needs no preflight.
+ *
+ * fetch is tried first. If the browser blocks it, fall back to JSONP, which
+ * loads the reply as a script tag. Some setups block one and allow the other,
+ * so having both means neither failure mode takes the page down.
+ */
+async function callSheet(params){
+  const q = new URLSearchParams({...params, t: Date.now()});
+  try {
+    const r = await fetch(SHEET_URL + "?" + q.toString(),
+                          {cache: "no-store", redirect: "follow"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r.json();
+  } catch (err) {
+    return await callSheetJsonp(params);
+  }
+}
+
+function callSheetJsonp(params){
   return new Promise((resolve, reject) => {
     const cb = "dobwatch_cb_" + (++jsonpSeq);
     const q = new URLSearchParams({...params, callback: cb, t: Date.now()});
@@ -382,12 +480,47 @@ function callSheet(params){
 const NOT_WIRED = () => !SHEET_URL || SHEET_URL.startsWith("PASTE_");
 
 async function loadStatus(){
-  if (NOT_WIRED()) return;
+  if (NOT_WIRED()) {
+    SAVE_ERR = "SHEET_URL is still the placeholder in index.html";
+    return;
+  }
   try {
     const j = await callSheet({});
     if (j.ok) { STATUS = j.status || {}; SAVE_ERR = ""; }
     else SAVE_ERR = j.error || "the sheet returned an error";
-  } catch (err) { SAVE_ERR = "cannot reach the sheet: " + err.message; }
+  } catch (err) {
+    SAVE_ERR = await diagnose(err);
+  }
+}
+
+/**
+ * JSONP failures give no detail, so fetch the same URL and look at what
+ * actually comes back. Turns "could not reach the sheet" into the reason.
+ */
+async function diagnose(err){
+  const url = SHEET_URL + "?callback=test";
+  try {
+    const r = await fetch(url, {redirect: "follow"});
+    const body = (await r.text()).trim();
+    if (body.startsWith("test(") || body.startsWith("{")) {
+      return "the sheet replied but the page could not read it. Reload once; "
+           + "if it persists, try another browser or disable extensions here.";
+    }
+    if (body.startsWith("{")) {
+      return "the deployed script is an OLD VERSION: it ignores the callback "
+           + "parameter. In Apps Script go to Deploy, Manage deployments, pencil "
+           + "icon, Version: New version, Deploy.";
+    }
+    if (/<html|sign ?in|accounts\.google/i.test(body)) {
+      return "the URL returns a Google sign-in page. In Manage deployments set "
+           + "\"Who has access\" to Anyone.";
+    }
+    return "unexpected reply from the sheet: " + body.slice(0, 120);
+  } catch (e2) {
+    return "could not reach " + SHEET_URL.slice(0, 60) + "... "
+         + "Open that URL in a tab. If it does not return JSON, the URL in "
+         + "index.html is not the current deployment. (" + err.message + ")";
+  }
 }
 
 async function saveTick(num, resolved){
