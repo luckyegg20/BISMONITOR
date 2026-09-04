@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOB Watch by JL</title>
+<title>DOB watch</title>
 <style>
 :root{
   --ink:#0E1216; --panel:#161B21; --line:#232B33; --line2:#2E3841;
@@ -73,6 +73,24 @@ svg{display:block;width:100%;height:56px;overflow:visible}
 .links a:hover{border-bottom-color:var(--text)}
 .flat{font-size:13px;color:var(--faint);margin-top:10px}
 
+.cx{margin-top:16px;border-top:1px solid var(--line2);padding-top:12px}
+.cx h4{margin:0 0 8px;font-size:12px;font-weight:600;color:var(--dim)}
+.cx label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;
+  border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+.cx label:last-of-type{border-bottom:0}
+.cx input{margin:3px 0 0;flex:0 0 auto;width:15px;height:15px;accent-color:var(--cool)}
+.cx .num{font-weight:600;min-width:74px}
+.cx .meta{color:var(--faint);font-size:12px}
+.cx a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line2)}
+.cx a:hover{color:var(--text)}
+.cx .done{color:var(--cool);font-weight:600;font-size:12px}
+.cx .todo{color:var(--warn);font-weight:600;font-size:12px}
+.save{position:sticky;bottom:0;margin-top:20px;background:var(--panel);
+  border-top:2px solid var(--warn);padding:12px 16px;display:flex;flex-wrap:wrap;
+  gap:10px;align-items:center;font-size:14px}
+.save b{color:var(--warn)}
+.save input[type=text]{width:70px}
+
 .msg{background:var(--panel);border-left:3px solid var(--warn);padding:14px 16px;
   font-size:14px;line-height:1.6}
 .msg code{background:#0B0F13;padding:1px 5px;font-size:13px}
@@ -88,7 +106,7 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 <div class="wrap">
 
 <header>
-  <h1>DOB Watch by JL</h1>
+  <h1>DOB watch</h1>
   <div class="stamp" id="stamp">Loading</div>
 </header>
 
@@ -112,6 +130,12 @@ const stamp = document.getElementById("stamp");
 
 let EMBEDDED = null;
 let DATA = null, expanded = null;
+
+// Who verified what. Stored in a Google Sheet behind an Apps Script web app,
+// so a tick saves instantly and everyone sees it. Paste your /exec URL here.
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
+let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
+try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
 const ui = {q:"", sort:"moved"};
 
 // data.json sits next to this page. ?src=<url> points somewhere else,
@@ -169,6 +193,24 @@ function detailRow(b){
     return `<div class="chart"><div class="cap"><b>${n}</b> ${esc(NAME[s])} ${esc(VERB[s])}</div>
       ${sparkline(seriesFor(b.id, s))}</div>`;
   }).join("");
+  const recs = b.sections.complaints?.records || [];
+  const cx = recs.length ? `<div class="cx">
+    <h4>Complaints filed in the last 30 days &mdash; tick once you have checked BIS</h4>
+    ${recs.map(r => {
+      const st = STATUS[r.num];
+      const done = st && st.resolved;
+      return `<label>
+        <input type="checkbox" data-num="${esc(r.num)}"${done ? " checked" : ""}>
+        <span>
+          <span class="num">${esc(r.num)}</span>
+          <span class="${done ? "done" : "todo"}">${done ? "RESOLVED" : "PENDING"}</span>
+          <span class="meta"> &middot; filed ${esc(r.date)}${r.category ? " &middot; cat " + esc(r.category) : ""}
+            &middot; <a href="${esc(r.url)}" target="_blank" rel="noopener">open on BIS</a>
+            ${done && st.by ? " &middot; by " + esc(st.by) : ""}${done && st.at ? " on " + esc(st.at) : ""}</span>
+        </span></label>`;
+    }).join("")}
+  </div>` : "";
+
   const links = SEC.filter(s => b.sections[s]?.url)
     .map(s => `<a href="${esc(b.sections[s].url)}" target="_blank" rel="noopener">${esc(NAME[s])} on BIS</a>`)
     .join("");
@@ -181,6 +223,7 @@ function detailRow(b){
     <div class="charts">${charts}</div>
     ${errs ? `<p class="flat" style="color:var(--warn)">${esc(errs)}</p>` : ""}
     <div class="links">${prof}${links}</div>
+    ${cx}
   </div></td></tr>`;
 }
 
@@ -242,11 +285,22 @@ function render(){
       <option value="dob_violations">Sort: open Violations-DOB</option>
       <option value="ecb_violations">Sort: open Violations-OATH/ECB</option>
     </select>
+    <input type="text" id="who" placeholder="Your initials" value="${esc(WHO)}"
+           style="flex:0 0 110px">
     <button id="reload">Reload</button>
   </div>
   <table><thead><tr>
     <th>Building</th><th class="n">Complaints (30d)</th><th class="n">Violations-DOB</th><th class="n">Violations-OATH/ECB</th>
   </tr></thead><tbody>${body || `<tr><td colspan="4" class="flat">No building matches that filter.</td></tr>`}</tbody></table>`;
+
+  if (SAVING || SAVE_ERR) {
+    const bar = document.createElement("div");
+    bar.className = "save";
+    bar.innerHTML = SAVE_ERR
+      ? `<b>Not saved</b> <span>${esc(SAVE_ERR)}</span>`
+      : `<b>Saving</b> <span>writing to the shared sheet</span>`;
+    app.appendChild(bar);
+  }
 
   const qs = document.getElementById("q");
   qs.addEventListener("input", e => { ui.q = e.target.value; render();
@@ -254,7 +308,23 @@ function render(){
   const sel = document.getElementById("sort");
   sel.value = ui.sort;
   sel.addEventListener("change", e => { ui.sort = e.target.value; render(); });
+  document.getElementById("who").addEventListener("input", e => {
+    WHO = e.target.value.slice(0, 12);
+    try { localStorage.setItem("dobwatch_who", WHO); } catch (err) {}
+  });
   document.getElementById("reload").addEventListener("click", load);
+
+  app.querySelectorAll(".cx input[type=checkbox]").forEach(cb => {
+    cb.addEventListener("click", e => e.stopPropagation());
+    cb.addEventListener("change", e => {
+      e.stopPropagation();
+      const num = cb.dataset.num;
+      if (cb.checked) STATUS[num] = {resolved:true, by:WHO||"", at:new Date().toISOString().slice(0,10)};
+      else delete STATUS[num];
+      render();
+      saveTick(num, cb.checked);
+    });
+  });
 
   app.querySelectorAll("tr.b").forEach(tr => {
     const toggle = () => { expanded = expanded === tr.dataset.id ? null : tr.dataset.id; render(); };
@@ -265,6 +335,38 @@ function render(){
   });
 }
 
+async function loadStatus(){
+  if (!SHEET_URL || SHEET_URL.startsWith("PASTE_")) return;   // not wired up yet
+  try {
+    const r = await fetch(SHEET_URL + "?t=" + Date.now(), {cache:"no-store"});
+    const j = await r.json();
+    if (j.ok) { STATUS = j.status || {}; SAVE_ERR = ""; }
+    else SAVE_ERR = j.error || "sheet returned an error";
+  } catch (err) { SAVE_ERR = "cannot reach the sheet: " + err.message; }
+}
+
+async function saveTick(num, resolved){
+  if (!SHEET_URL || SHEET_URL.startsWith("PASTE_")) {
+    SAVE_ERR = "SHEET_URL is not set in index.html, so nothing was saved";
+    render(); return;
+  }
+  SAVING++; SAVE_ERR = ""; render();
+  try {
+    // text/plain keeps this a simple request; Apps Script cannot answer
+    // a CORS preflight, so a JSON content type would be rejected
+    const r = await fetch(SHEET_URL, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify({num, resolved, by: WHO})
+    });
+    const j = await r.json();
+    if (j.ok) STATUS = j.status || {};
+    else SAVE_ERR = j.error || "the sheet refused the write";
+  } catch (err) {
+    SAVE_ERR = "save failed: " + err.message;
+  } finally { SAVING--; render(); }
+}
+
 async function load(){
   if (EMBEDDED) { DATA = EMBEDDED; render(); return; }
   try {
@@ -272,6 +374,7 @@ async function load(){
                           {cache:"no-store"});
     if (!r.ok) throw new Error("HTTP " + r.status);
     DATA = await r.json();
+    await loadStatus();
     render();
   } catch (err) {
     stamp.textContent = "No data";
@@ -286,5 +389,11 @@ async function load(){
 }
 load();
 </script>
+<!-- Visitor counting. Replace YOURCODE with the code from your GoatCounter
+     account, then this line starts recording pageviews and unique visitors.
+     No cookies, no personal data, nothing to consent to. Delete the line to
+     turn counting off. -->
+<script data-goatcounter="https://YOURCODE.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
