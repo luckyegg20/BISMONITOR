@@ -152,6 +152,13 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
 
 <script>
 const SEC = ["complaints","dob_violations","ecb_violations"];
+
+// DOB's official complaint category list (nyc.gov/assets/buildings/pdf/complaint_category.pdf)
+const CAT = {"1":"ACCIDENT - Construction/Plumbing","2":"ACCIDENT - To Public","3":"Adjacent Buildings - Not Protected","4":"After Hours Work - Illegal","5":"Permit - None (Building/PA/Demo etc.)","6":"CONSTRUCTION - Change Grade/Change Watercourse","7":"CONSTRUCTION - Change Watercourse","8":"Contractor's Sign - NONE","9":"Debris - Excessive","10":"Debris/Building - Falling or In Danger of Falling","11":"DEMOLITION - No Permit","12":"DEMOLITION - Unsafe/Illegal/Mechanical Demo","13":"Elevator In (FDNY) Readiness - NONE","14":"Excavation - Undermining Adjacent Building","15":"Fence - NONE/Inadequate/Illegal","16":"Inadequate Support/Shoring","17":"Material/Personnel Hoist - No Permit","18":"Material Storage - Unsafe","19":"Mechanical Demolition - Illegal","1A":"Illegal Conversion Commercial Building/Space to Dwelling Units","1B":"Illegal Tree Removal/Topo. Change in SNAD","1C":"Damage Assessment Request or Report (Disaster)","1D":"Con Edison Referral","1E":"Suspended (Hanging) Scaffolds - No Permit/License/Dangerous/Accident","1F":"Failure to Comply with Annual Crane Inspection","1G":"Stalled Construction Site","1H":"Emergency Asbestos Response Inspection","1J":"Jewelry/Dentistry Torch: Gas Piping Removed w/o Permit","1K":"Bowstring Truss Tracking Complaint","1L":"Gas Utility Referral","1U":"Special Operations Compliance Inspection","1V":"Electrical Enforcement Work Order (DOB)","1W":"Plumbing Enforcement Work Order (DOB)","1X":"Construction Enforcement Work Order (DOB)","1Y":"Enforcement Work Order (DOB)","1Z":"Enforcement Work Order (DOB)","20":"Landmark Building - ILLEGAL WORK","21":"Safety Net/Guard Rail - Damaged/Inadequate/NONE (over 6-stories/75FT)","22":"Safety Netting - NONE","23":"Sidewalk Shed/Supported Scaffold/Inadequate/Defect/NONE/NO PMT/NO CERT","24":"Sidewalk Shed - NONE","25":"Warning Signs/Lights - NONE","26":"Watchman - NONE","27":"Auto Repair - ILLEGAL","28":"BUILDING - In Danger of Collapse","29":"BUILDING - Vacant, Open and Unguarded","2A":"Posted Notice or Order Removed/Tampered With","2B":"Failure to Comply with Vacate Order","2C":"Smoking Ban - Smoking on Construction Site","2D":"Smoking Signs - NO SMOKING SIGNS Not Observed on Construction Site","2E":"Tracking Complaint for Full Demolition Notification","2F":"Building Under Structural Monitoring","2G":"Advertising Sign/Billboard/Posters/Flexible Fabric - ILLEGAL","2H":"Second Avenue Subway Construction","2J":"SANDY: Building Destroyed","2K":"Structurally Compromised Building (LL33/08)","2L":"Façade (LL11/98) - Unsafe Notification","2M":"Monopole Tracking Complaint","2N":"COVID-19 Executive Order","2P":"Façades Unit Compliance Inspection","30":"Building Shaking/Vibrating/Struct Stability Affected","31":"Certificate of Occupancy - None/ILLEGAL/Contrary to CO","32":"C of O - Not Being Complied With","33":"Commercial Use - ILLEGAL","34":"Compactor Room/Refuse Chute - ILLEGAL","35":"Curb Cut/Driveway/Carport - ILLEGAL","36":"Driveway/Carport - ILLEGAL","37":"Egress: Locked/Blocked/Improper/No Secondary Means","38":"Egress: Exit Door Not Proper","39":"Egress: No Secondary Means","3A":"Unlicensed/ILLEGAL/Improper Electrical Work in Progress","3B":"Routine Inspection","3C":"Plan Compliance Inspection","3D":"Bicycle Access Waiver Request - Elevator Safety","3E":"Bicycle Access Waiver Request - Alternate Parking","3G":"Restroom Non-Compliance with Local Law 79/16","3H":"DCP/BSA Compliance Inspection","40":"Falling - Part of Building","41":"Falling - Part of Building in Danger of","42":"Fence - ILLEGAL","43":"Structural Stability Affected","44":"Fireplace/Wood Stove - ILLEGAL","45":"Illegal Conversion +","46":"PA Permit - None","47":"PA Permit - Not Being Complied With","48":"Residential Use - ILLEGAL","49":"Storefront or Business Sign/Awning/Marquee/Canopy - ILLEGAL","4A":"Illegal Hotel Rooms in Residential Buildings","4B":"SEP - Professional Certification Compliance Audit","4E":"Stalled Sites Tracking Complaint","4G":"Illegal Conversion No Access Follow-Up","4H":"V.E.S.T. Program (DOB & NYPD)","4J":"M.A.R.C.H. Program (INTERAGENCY)","4K":"CSC: DM Tracking Complaint","4L":"CSC: High-Rise Tracking Complaint","4M":"CSC: Low-Rise Tracking Complaint","4N":"Retaining Wall Tracking Complaint","4P":"Legal/Padlock Tracking Complaint","4S":"Sustainability Enforcement Work Order","4W":"Woodside Settlement Project","4X":"After Hours Work - With an AHV Permit","50":"Sign Falling: Danger/Sign Erection or Display In-Progress (ILLEGAL)","51":"Illegal Social Club","52":"Sprinkler System - Inadequate","53":"Vent/Exhaust - Illegal/Improper","54":"Wall/Retaining Wall - Bulging/Cracked","55":"Zoning: Non-Conforming","56":"Boiler: Fumes/Smoke/Carbon Monoxide","57":"Boiler: Illegal","58":"Boiler: Defective/Inoperative/No Permit","59":"Electrical Wiring: Defective/Exposed - In Progress","5A":"Request for Joint FDNY/DOB Inspection","5B":"Non-Compliance: with Lightweight Materials","5C":"Structural Stability Impacted - New Building Under Construction","5D":"Non-Compliance: with TPPN 1/00 - Vertical Enlargements","5E":"Amusement Ride Accident/Incident","5F":"Compliance Inspection","5G":"Unlicensed/Illegal/Improper Work In-Progress","5H":"Illegal Activity","5J":"Multi Agency Joint Inspection","60":"Electrical Work: Improper","61":"Electrical Work: Unlicensed, In-Progress","62":"Elevator: Danger Condition/Shaft Open/Unguarded","63":"Elevator: Defective/Inoperative","64":"Elevator Shaft: Open and Unguarded","65":"Gas Hook-Up/Piping - Illegal or Defective","66":"Plumbing Work - Illegal/No Permit (also Sprinkler/Standpipe)","67":"Crane: No Permit/License/Cert/Unsafe/Illegal","68":"Crane/Scaffold: Unsafe/Illegal Operations","69":"Crane/Scaffold: Unsafe Installation/Equipment","6A":"Vesting Inspection","6B":"Semi-Annual Homeless Shelter Inspection: Plumbing","6C":"Semi-Annual Homeless Shelter Inspection: Construction","6D":"Semi-Annual Homeless Shelter Inspection: Electrical","6M":"Elevator: Multiple Devices on Property","6S":"Elevator: Single Device on Property/No Alternate Service","6V":"Tenant Safety Inspection","6W":"Tenant Safety - Failure to Post/Distribute","6X":"Work Without Permits Watch List Compliance","6Y":"Local Law Audits","6Z":"Training Compliance","70":"Suspension Scaffold Hanging - No Work In-Progress","71":"SRO: Illegal Work/No Permit/Change in Occupancy Use +","72":"SRO: Change in Occupancy/Use","73":"Failure to Maintain","74":"Illegal Commercial/Manufacturing Use in Residential Zone","75":"Adult Establishment","76":"Unlicensed/Illegal/Improper Plumbing Work In-Progress","77":"Contrary to LL58/87 (Handicap Access)","78":"Privately Owned Public Space/Non-Compliance","79":"Lights from Parking Lot Shining on Building","7A":"Integrity Complaint Referral","7B":"Illegal Commercial or Manufacturing Use in a C1 or C2 Zone","7F":"CSE: Tracking Compliance","7G":"CSE: Sweep","7J":"Work Without a Permit - Occupied Multiple Dwelling","7K":"Local Law 188/17 Compliance Inspections - Active Jobs","7L":"DOHMH Referral - Tenant Protection Non-Compliance","7N":"Privately Owned Public Space/Compliance Inspection","80":"Elevator Not Inspected/Illegal/No Permit","81":"Elevator: Accident","82":"Boiler: Accident/Explosion","83":"Construction: Contrary/Beyond Approved Plans/Permits +","84":"Façade: Defective/Cracking","85":"Failure to Retain Water/Improper Drainage (LL103/89)","86":"Work Contrary to Stop Work Order","87":"Request for Deck Safety Inspection","88":"Safety Net/Guard Rail - Damaged/Inadequate/None (6-stories 75FT or Less)","89":"Accident - Cranes/Derricks/Suspension","8A":"Construction Safety Compliance (CSC) Action","90":"Unlicensed/Illegal Activity","91":"Site Conditions Endangering Workers","92":"Illegal Conversion of Manufacturing/Industrial Space","93":"Request for Retaining Wall Safety Inspection","94":"Plumbing: Defective/Leaking/Not Maintained","95":"Bronx 2nd Offense Pilot Project","96":"Unlicensed Boiler, Electrical, Plumbing or Sign Work Completed","97":"Other Agency Jurisdiction","98":"Refer to Operations for Determination","99":"Other"};
+const catName = c => {
+  const k = String(c || "").trim().toUpperCase();
+  return CAT[k] || CAT[k.replace(/^0+/, "")] || "";
+};
 const NAME = {complaints:"Complaints (30d)", dob_violations:"Violations-DOB", ecb_violations:"Violations-OATH/ECB"};
 const VERB = {complaints:"filed in last 30 days", dob_violations:"open", ecb_violations:"open"};
 const app = document.getElementById("app");
@@ -162,10 +169,10 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
-const ui = {q:"", sort:"moved", group:"all"};
+const ui = {q:"", sort:"moved", group:"all", cat:"all"};
 
 // data.json sits next to this page. ?src=<url> points somewhere else,
 // e.g. a raw.githubusercontent.com URL when you open this file locally.
@@ -242,7 +249,9 @@ function detailRow(b){
     return `<div class="chart"><div class="cap">${cap}</div>
       ${sparkline(seriesFor(b.id, s))}</div>`;
   }).join("");
-  const recs = b.sections.complaints?.records || [];
+  let recs = b.sections.complaints?.records || [];
+  if (ui.cat !== "all")
+    recs = recs.filter(r => String(r.category || "").trim().toUpperCase() === ui.cat);
   const cx = recs.length ? `<div class="cx">
     <h4>Complaints filed in the last 30 days &mdash; tick once you have checked BIS</h4>
     ${recs.map(r => {
@@ -253,7 +262,7 @@ function detailRow(b){
         <span>
           <span class="num">${esc(r.num)}</span>
           <span class="${done ? "done" : "todo"}">${done ? "RESOLVED" : "PENDING"}</span>
-          <span class="meta"> &middot; filed ${esc(r.date)}${r.category ? " &middot; cat " + esc(r.category) : ""}
+          <span class="meta"> &middot; filed ${esc(r.date)}${r.category ? " &middot; " + esc(catName(r.category) || "cat " + r.category) : ""}
             &middot; <a href="${esc(r.url)}" target="_blank" rel="noopener">open on BIS</a>
             ${done && st.by ? " &middot; by " + esc(st.by) : ""}${done && st.at ? " on " + esc(st.at) : ""}</span>
         </span></label>`;
@@ -366,6 +375,15 @@ function render(){
   if (ui.group !== "all" && !groupsAll.includes(ui.group)) ui.group = "all";
   if (ui.group !== "all") rows = rows.filter(b => (b.group || "Other") === ui.group);
 
+  // complaint types actually present in the current data, so the list stays short
+  const catsAll = [...new Set(DATA.buildings.flatMap(b =>
+    (b.sections.complaints?.records || []).map(r => String(r.category || "").trim().toUpperCase())
+  ))].filter(Boolean).sort((a, b) => (catName(a) || a).localeCompare(catName(b) || b));
+  if (ui.cat !== "all" && !catsAll.includes(ui.cat)) ui.cat = "all";
+  if (ui.cat !== "all") rows = rows.filter(b =>
+    (b.sections.complaints?.records || [])
+      .some(r => String(r.category || "").trim().toUpperCase() === ui.cat));
+
   const rowHtml = b => {
     const d = deltas(b);
     const cells = SEC.map(s => {
@@ -429,6 +447,7 @@ function render(){
   <div class="controls">
     <input type="search" id="q" placeholder="Filter by address or BIN" value="${esc(ui.q)}">
     <select id="grp"></select>
+    <select id="cat"></select>
     <select id="sort">
       <option value="moved">Sort: recent movement</option>
       <option value="name">Sort: address</option>
@@ -461,6 +480,14 @@ function render(){
     .concat(groupsAll.map(g => `<option value="${esc(g)}">${esc(g)}</option>`)).join("");
   gsel.value = ui.group;
   gsel.addEventListener("change", e => { ui.group = e.target.value; render(); });
+
+  const csel = document.getElementById("cat");
+  csel.innerHTML = [`<option value="all">All complaint types</option>`]
+    .concat(catsAll.map(c =>
+      `<option value="${esc(c)}">${esc(catName(c) || "Category " + c)}</option>`)).join("");
+  csel.value = ui.cat;
+  csel.disabled = catsAll.length === 0;
+  csel.addEventListener("change", e => { ui.cat = e.target.value; render(); });
 
   const sel = document.getElementById("sort");
   sel.value = ui.sort;
