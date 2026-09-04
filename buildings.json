@@ -395,90 +395,103 @@
     "label": "8 Spruce Street",
     "boro": 1,
     "houseno": "8",
-    "street": "spruce street"
+    "street": "spruce street",
+    "bin": "1087485"
   },
   {
     "group": "Kips Bay Court",
     "label": "460 2nd Avenue",
     "boro": 1,
     "houseno": "460",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082729"
   },
   {
     "group": "Kips Bay Court",
     "label": "470 2nd Avenue",
     "boro": 1,
     "houseno": "470",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082730"
   },
   {
     "group": "Kips Bay Court",
     "label": "480 2nd Avenue",
     "boro": 1,
     "houseno": "480",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082731"
   },
   {
     "group": "Kips Bay Court",
     "label": "484 2nd Avenue",
     "boro": 1,
     "houseno": "484",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082732"
   },
   {
     "group": "Kips Bay Court",
     "label": "490 2nd Avenue",
     "boro": 1,
     "houseno": "490",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082733"
   },
   {
     "group": "Kips Bay Court",
     "label": "500 2nd Avenue",
     "boro": 1,
     "houseno": "500",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082734"
   },
   {
     "group": "Kips Bay Court",
     "label": "510 2nd Avenue",
     "boro": 1,
     "houseno": "510",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082735"
   },
   {
     "group": "Kips Bay Court",
     "label": "520 2nd Avenue",
     "boro": 1,
     "houseno": "520",
-    "street": "2 avenue"
+    "street": "2 avenue",
+    "bin": "1082736"
   },
   {
     "group": "Parker Towers",
     "label": "104-20 Queens Boulevard",
     "boro": 4,
     "houseno": "104-20",
-    "street": "queens boulevard"
+    "street": "queens boulevard",
+    "bin": "4433860"
   },
   {
     "group": "Parker Towers",
     "label": "104-40 Queens Boulevard",
     "boro": 4,
     "houseno": "104-40",
-    "street": "queens boulevard"
+    "street": "queens boulevard",
+    "bin": "4433858"
   },
   {
     "group": "Parker Towers",
     "label": "104-60 Queens Boulevard",
     "boro": 4,
     "houseno": "104-60",
-    "street": "queens boulevard"
+    "street": "queens boulevard",
+    "bin": "4433859"
   },
   {
     "group": "Parker Towers",
     "label": "104-70 Queens Boulevard",
     "boro": 4,
     "houseno": "104-70",
-    "street": "queens boulevard"
+    "street": "queens boulevard",
+    "bin": "4075227"
   }
 ]
