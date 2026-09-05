@@ -1,5 +1,5 @@
 {
- "checked_at": "Sep 05, 2026 at 11:07 AM EDT",
+ "checked_at": "Sep 05, 2026 at 02:13 PM EDT",
  "source": "opendata",
  "sections": [
   "complaints",
@@ -9314,6 +9314,356 @@
   },
   {
    "t": "2026-09-05T15:08:55+00:00",
+   "counts": {
+    "1|601|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|8|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|541|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|10|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|4|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|655|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|625|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|645|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|271|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|531|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|6|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|5|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|281|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|309|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|277|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|272|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|300|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|280|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|511|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|4|peter cooper road": {
+     "complaints": 2,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|441|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|2|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|16|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|20|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|620|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|628|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|315|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|431|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|350|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|360|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|370|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|5|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|1|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|240|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|455|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|445|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|270|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|390|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|420|east 23rd street": {
+     "complaints": 2,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|440|east 23rd street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|3|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|515|east 14th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|545|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|525|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|520|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|526|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|540|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|510|east 23rd street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|530|east 23rd street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|7|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    },
+    "1|11|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|19|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|400|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|440|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|450|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|310|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|8|spruce street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 4
+    },
+    "1|460|2 avenue": {
+     "complaints": 2,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|470|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|480|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|484|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|490|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|500|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|510|2 avenue": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|520|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "4|104-20|queens boulevard": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    },
+    "4|104-40|queens boulevard": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "4|104-60|queens boulevard": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "4|104-70|queens boulevard": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    }
+   }
+  },
+  {
+   "t": "2026-09-05T18:14:17+00:00",
    "counts": {
     "1|601|east 20th street": {
      "complaints": 0,
