@@ -430,8 +430,16 @@
  },
  "4|104-60|queens boulevard": {
   "complaint_ids": [],
-  "complaints": 1,
-  "dob_violations": 1,
+  "complaints": 0,
+  "dob_violations": 0,
   "ecb_violations": 0
+ },
+ "4|104-70|queens boulevard": {
+  "complaint_ids": [
+   "4A46797"
+  ],
+  "complaints": 1,
+  "dob_violations": 0,
+  "ecb_violations": 1
  }
 }
