@@ -485,13 +485,4 @@
     "houseno": "104-60",
     "street": "queens boulevard",
     "bin": "4433859"
-  },
-  {
-    "group": "Parker Towers",
-    "label": "104-70 Queens Boulevard",
-    "boro": 4,
-    "houseno": "104-70",
-    "street": "queens boulevard",
-    "bin": "4075227"
   }
-]
