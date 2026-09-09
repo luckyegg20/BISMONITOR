@@ -143,6 +143,8 @@ footer{margin-top:36px;font-size:13px;color:var(--faint);line-height:1.7}
   <p class="headline quiet">Loading</p>
 </div>
 
+<a href="#" id="top" title="Back to top">&uarr; Top</a>
+
 <footer>
   Complaints column counts filings in the last 30 days; the other two count open records.
   Small number is everything on file.
@@ -169,10 +171,10 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
-const ui = {q:"", sort:"moved", group:"all", cat:"all"};
+const ui = {q:"", sort:"moved", group:"all", cat:"all", openHear:true, openOwed:true};
 
 // data.json sits next to this page. ?src=<url> points somewhere else,
 // e.g. a raw.githubusercontent.com URL when you open this file locally.
@@ -445,8 +447,11 @@ function render(){
     }
   }
   const liveBuckets = buckets.filter(x => x.rows.length);
-  const hearingBlock = liveBuckets.length ? `<div class="owed">
-    <h4>Hearings</h4>
+  const hearingCount = liveBuckets.reduce((a, x) => a + x.rows.length, 0);
+  const hearingBlock = liveBuckets.length ? `<details class="owed" id="d-hear"${
+      ui.openHear ? " open" : ""}>
+    <summary>Hearings<span class="tag">${hearingCount} violation${
+      hearingCount === 1 ? "" : "s"}</span></summary>
     ${liveBuckets.map(x =>
       `<div class="bucket${x.soon ? " soon" : ""}">${esc(x.label)} &middot; ${x.rows.length}</div>` +
       x.rows
@@ -470,7 +475,7 @@ function render(){
                               : " &middot; in " + d + " days"}</span>
             ${box}</div>`;
         }).join("")).join("")}
-  </div>` : "";
+  </details>` : "";
 
   // which buildings owe money, and how much
   const owed = [];
@@ -486,14 +491,16 @@ function render(){
   }
   owed.sort((a, b) => b.sum - a.sum);
   const cash = n => "$" + Number(n).toLocaleString("en-US", {minimumFractionDigits: 2});
-  const owedBlock = owed.length ? `<div class="owed">
-    <h4>Buildings with an unpaid penalty balance</h4>
+  const owedBlock = owed.length ? `<details class="owed" id="d-owed"${
+      ui.openOwed ? " open" : ""}>
+    <summary>Buildings with an unpaid penalty balance<span class="tag">${
+      cash(owedTotal)}</span></summary>
     ${owed.map(o => `<div class="who">
       <button class="link" data-go="${esc(o.id)}">${esc(o.label)}</button>
       <span class="amt">${cash(o.sum)} &middot; ${o.n} violation${o.n === 1 ? "" : "s"}${
         o.overdue ? " &middot; overdue" : ""}</span></div>`).join("")}
     <div class="tot"><span>Total</span><span class="amt">${cash(owedTotal)}</span></div>
-  </div>` : "";
+  </details>` : "";
 
   app.innerHTML = head + since + hearingBlock + owedBlock + `
   <div class="controls">
@@ -549,6 +556,11 @@ function render(){
     try { localStorage.setItem("dobwatch_who", WHO); } catch (err) {}
   });
   document.getElementById("reload").addEventListener("click", load);
+
+  const hd = document.getElementById("d-hear");
+  if (hd) hd.addEventListener("toggle", () => { ui.openHear = hd.open; });
+  const od = document.getElementById("d-owed");
+  if (od) od.addEventListener("toggle", () => { ui.openOwed = od.open; });
 
   app.querySelectorAll(".owed input[data-ask]").forEach(cb => {
     cb.addEventListener("click", e => e.stopPropagation());
@@ -718,6 +730,18 @@ async function load(){
       <code>?src=</code> and a raw.githubusercontent.com link to data.json.</div>`;
   }
 }
+// show the back-to-top control once you have scrolled past the header
+const topBtn = document.getElementById("top");
+if (topBtn) {
+  const sync = () => topBtn.classList.toggle("on", window.scrollY > 400);
+  window.addEventListener("scroll", sync, {passive: true});
+  sync();
+  topBtn.addEventListener("click", e => {
+    e.preventDefault();
+    window.scrollTo({top: 0, behavior: "smooth"});
+  });
+}
+
 load();
 </script>
 <!-- Visitor counting. Replace YOURCODE with the code from your GoatCounter
