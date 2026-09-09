@@ -145,8 +145,8 @@
  },
  "1|420|east 23rd street": {
   "complaint_ids": [
-   "1735368",
-   "1735367"
+   "1735367",
+   "1735368"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -233,8 +233,8 @@
  },
  "1|4|peter cooper road": {
   "complaint_ids": [
-   "1735365",
-   "1735362"
+   "1735362",
+   "1735365"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -412,7 +412,7 @@
   ],
   "complaints": 1,
   "dob_violations": 0,
-  "ecb_violations": 4
+  "ecb_violations": 5
  },
  "4|104-20|queens boulevard": {
   "complaint_ids": [
