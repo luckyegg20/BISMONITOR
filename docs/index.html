@@ -211,10 +211,10 @@ let DATA = null, expanded = null;
 
 // Who verified what. Stored in a Google Sheet behind an Apps Script web app,
 // so a tick saves instantly and everyone sees it. Paste your /exec URL here.
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx49JMiHey_hU3pCapSz0f3KsgieucLB5fTsa2Ih91iXoa7DDVtyG_m5db8ihbJiShKHw/exec";
+const SHEET_URL = "PASTE_YOUR_EXEC_URL_HERE";
 let STATUS = {}, WHO = "", SAVING = 0, SAVE_ERR = "";
 try { WHO = localStorage.getItem("dobwatch_who") || ""; } catch (e) {}
-const ui = {q:"", sort:"moved", group:"all", cat:"all", openHear:false, openOwed:false};
+const ui = {q:"", sort:"moved", group:"all", cat:"all", openNew:false, openHear:false, openOwed:false};
 
 // data.json sits next to this page. ?src=<url> points somewhere else,
 // e.g. a raw.githubusercontent.com URL when you open this file locally.
@@ -369,6 +369,33 @@ function render(){
       if (d[s] > 0) fresh[s] += d[s];
     }
   }
+  // complaints filed in the last NEW_DAYS days, by filing date rather than by
+  // what moved since the last check, so a new one stays visible for a week
+  const NEW_DAYS = 7;
+  const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+  const daysAgo = iso => Math.round((today0 - new Date(iso + "T00:00:00")) / 86400000);
+  const fresh7 = [];
+  for (const b of DATA.buildings) {
+    for (const r of (b.sections.complaints?.records || [])) {
+      if (STATUS[r.num]?.resolved || !r.date) continue;
+      const ago = daysAgo(r.date);
+      if (ago >= 0 && ago <= NEW_DAYS) fresh7.push({b, r, ago});
+    }
+  }
+  fresh7.sort((x, y) => x.ago - y.ago);
+  const newBlock = fresh7.length ? `<details class="owed" id="d-new"${
+      ui.openNew ? " open" : ""}>
+    <summary>New complaints <span class="tag">${fresh7.length} in the last ${
+      NEW_DAYS} days</span></summary>
+    <div class="bucket soon">Filed in the last ${NEW_DAYS} days &middot; ${fresh7.length}</div>
+    ${fresh7.map(({b, r, ago}) => `<div class="who">
+      <button class="link" data-go="${esc(b.id)}">${esc(b.label)}
+        <span class="vn">${esc(r.num)}</span></button>
+      <span class="amt">${esc(r.date)} &middot; ${
+        ago === 0 ? "today" : ago === 1 ? "yesterday" : ago + " days ago"}</span>
+    </div>`).join("")}
+  </details>` : "";
+
   const CAPTION = {complaints:"complaints to verify", dob_violations:"open Violations-DOB",
                    ecb_violations:"OATH/ECB to verify"};
   const stats = SEC.map(s => {
@@ -387,11 +414,13 @@ function render(){
              `<span>penalties unpaid 3+ days</span></div>`;
     })();
 
-  const newBits = SEC.filter(s => fresh[s] > 0)
-    .map(s => `${fresh[s]} new ${s === "complaints"
-        ? (fresh[s] === 1 ? "complaint" : "complaints") : NAME[s]}`);
+  const newBits = [];
+  if (fresh7.length)
+    newBits.push(`${fresh7.length} new complaint${fresh7.length === 1 ? "" : "s"} in the last ${NEW_DAYS} days`);
+  for (const s of ["dob_violations", "ecb_violations"])
+    if (fresh[s] > 0) newBits.push(`${fresh[s]} new ${NAME[s]} since the last check`);
   const head = (newBits.length
-    ? `<p class="headline">${newBits.join(", ")} since the last check.</p>`
+    ? `<p class="headline">${newBits.join(", ")}.</p>`
     : `<p class="headline quiet">Nothing new since the last check.</p>`)
     + `<div class="sum">${stats}</div>`;
   const since = (DATA.history||[]).length > 1
@@ -463,7 +492,6 @@ function render(){
   }).join("");
 
   // hearings coming up, and hearings that passed with nothing recorded
-  const today0 = new Date(); today0.setHours(0, 0, 0, 0);
   const daysTo = iso => Math.round((new Date(iso + "T00:00:00") - today0) / 86400000);
   const buckets = [
     {label: "Hearing within 5 days",    soon: true,  rows: []},
@@ -542,7 +570,7 @@ function render(){
     <div class="tot"><span>Total</span><span class="amt">${cash(owedTotal)}</span></div>
   </details>` : "";
 
-  app.innerHTML = head + since + hearingBlock + owedBlock + `
+  app.innerHTML = head + since + newBlock + hearingBlock + owedBlock + `
   <div class="controls">
     <input type="search" id="q" placeholder="Filter by address or BIN" value="${esc(ui.q)}">
     <select id="grp"></select>
@@ -597,6 +625,8 @@ function render(){
   });
   document.getElementById("reload").addEventListener("click", load);
 
+  const nd = document.getElementById("d-new");
+  if (nd) nd.addEventListener("toggle", () => { ui.openNew = nd.open; });
   const hd = document.getElementById("d-hear");
   if (hd) hd.addEventListener("toggle", () => { ui.openHear = hd.open; });
   const od = document.getElementById("d-owed");
