@@ -145,8 +145,8 @@
  },
  "1|420|east 23rd street": {
   "complaint_ids": [
-   "1735367",
-   "1735368"
+   "1735368",
+   "1735367"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -200,12 +200,9 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
-   "1735861",
-   "1735983",
-   "1735721",
-   "1735350"
+   "1735721"
   ],
-  "complaints": 4,
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
