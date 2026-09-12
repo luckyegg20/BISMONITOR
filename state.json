@@ -200,9 +200,10 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
+   "1736101",
    "1735721"
   ],
-  "complaints": 1,
+  "complaints": 2,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -360,8 +361,10 @@
   "ecb_violations": 0
  },
  "1|625|east 14th street": {
-  "complaint_ids": [],
-  "complaints": 0,
+  "complaint_ids": [
+   "1736173"
+  ],
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
