@@ -145,8 +145,8 @@
  },
  "1|420|east 23rd street": {
   "complaint_ids": [
-   "1735367",
-   "1735368"
+   "1735368",
+   "1735367"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -200,14 +200,10 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
-   "1736314",
-   "1736364",
-   "1736273",
-   "1736235",
-   "1736101",
+   "1736470",
    "1735721"
   ],
-  "complaints": 6,
+  "complaints": 2,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -277,10 +273,8 @@
   "ecb_violations": 0
  },
  "1|515|east 14th street": {
-  "complaint_ids": [
-   "1733928"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
