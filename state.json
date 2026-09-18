@@ -167,10 +167,8 @@
   "ecb_violations": 0
  },
  "1|440|east 23rd street": {
-  "complaint_ids": [
-   "1734085"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
