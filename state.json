@@ -144,13 +144,8 @@
   "ecb_violations": 0
  },
  "1|420|east 23rd street": {
-  "complaint_ids": [
-   "1736636",
-   "1736635",
-   "1735368",
-   "1735367"
-  ],
-  "complaints": 4,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -197,13 +192,8 @@
   "ecb_violations": 0
  },
  "1|460|2 avenue": {
-  "complaint_ids": [
-   "1737223",
-   "1737086",
-   "1736723",
-   "1735721"
-  ],
-  "complaints": 4,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -232,13 +222,8 @@
   "ecb_violations": 0
  },
  "1|4|peter cooper road": {
-  "complaint_ids": [
-   "1736634",
-   "1736631",
-   "1735365",
-   "1735362"
-  ],
-  "complaints": 4,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -351,18 +336,14 @@
   "ecb_violations": 0
  },
  "1|620|east 20th street": {
-  "complaint_ids": [
-   "1735088"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|625|east 14th street": {
-  "complaint_ids": [
-   "1736173"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -391,10 +372,8 @@
   "ecb_violations": 0
  },
  "1|7|peter cooper road": {
-  "complaint_ids": [
-   "1735016"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 1
  },
@@ -405,10 +384,8 @@
   "ecb_violations": 0
  },
  "1|8|spruce street": {
-  "complaint_ids": [
-   "1735068"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 5
  },
