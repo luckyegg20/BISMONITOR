@@ -354,10 +354,8 @@
   "ecb_violations": 0
  },
  "1|620|east 20th street": {
-  "complaint_ids": [
-   "1735088"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -406,10 +404,8 @@
   "ecb_violations": 0
  },
  "1|8|spruce street": {
-  "complaint_ids": [
-   "1735068"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 5
  },
