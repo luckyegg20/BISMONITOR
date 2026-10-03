@@ -198,11 +198,10 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
-   "1737969",
    "1737439",
    "1736723"
   ],
-  "complaints": 3,
+  "complaints": 2,
   "dob_violations": 0,
   "ecb_violations": 0
  },
