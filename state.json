@@ -167,8 +167,10 @@
   "ecb_violations": 0
  },
  "1|440|east 23rd street": {
-  "complaint_ids": [],
-  "complaints": 0,
+  "complaint_ids": [
+   "1738207"
+  ],
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -231,8 +233,8 @@
  },
  "1|4|peter cooper road": {
   "complaint_ids": [
-   "1736631",
-   "1736634"
+   "1736634",
+   "1736631"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -358,7 +360,7 @@
   ],
   "complaints": 1,
   "dob_violations": 0,
-  "ecb_violations": 0
+  "ecb_violations": 1
  },
  "1|628|east 20th street": {
   "complaint_ids": [],
