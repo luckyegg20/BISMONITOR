@@ -147,8 +147,8 @@
  },
  "1|420|east 23rd street": {
   "complaint_ids": [
-   "1736636",
-   "1736635"
+   "1736635",
+   "1736636"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -199,12 +199,8 @@
   "ecb_violations": 0
  },
  "1|460|2 avenue": {
-  "complaint_ids": [
-   "1738407",
-   "1737439",
-   "1736723"
-  ],
-  "complaints": 3,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -413,8 +409,10 @@
   "ecb_violations": 1
  },
  "4|104-40|queens boulevard": {
-  "complaint_ids": [],
-  "complaints": 0,
+  "complaint_ids": [
+   "4A54315"
+  ],
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
