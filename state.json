@@ -139,10 +139,9 @@
  },
  "1|400|east 20th street": {
   "complaint_ids": [
-   "1738759",
-   "1737529"
+   "1738759"
   ],
-  "complaints": 2,
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -201,9 +200,10 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
+   "1738824",
    "1738647"
   ],
-  "complaints": 1,
+  "complaints": 2,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -233,8 +233,8 @@
  },
  "1|4|peter cooper road": {
   "complaint_ids": [
-   "1736634",
-   "1736631"
+   "1736631",
+   "1736634"
   ],
   "complaints": 2,
   "dob_violations": 0,
