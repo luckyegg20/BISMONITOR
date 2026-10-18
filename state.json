@@ -148,11 +148,8 @@
   "ecb_violations": 0
  },
  "1|420|east 23rd street": {
-  "complaint_ids": [
-   "1736636",
-   "1736635"
-  ],
-  "complaints": 2,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -235,11 +232,8 @@
   "ecb_violations": 0
  },
  "1|4|peter cooper road": {
-  "complaint_ids": [
-   "1736631",
-   "1736634"
-  ],
-  "complaints": 2,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
