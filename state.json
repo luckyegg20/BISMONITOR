@@ -192,8 +192,10 @@
   "ecb_violations": 0
  },
  "1|455|east 14th street": {
-  "complaint_ids": [],
-  "complaints": 0,
+  "complaint_ids": [
+   "1739562"
+  ],
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
