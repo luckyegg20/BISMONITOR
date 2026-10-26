@@ -1,5 +1,5 @@
 {
- "checked_at": "Oct 25, 2026 at 06:30 PM EDT",
+ "checked_at": "Oct 26, 2026 at 02:38 PM EDT",
  "source": "opendata",
  "sections": [
   "complaints",
@@ -22,7 +22,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 23,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083700",
      "error": null,
      "records": []
@@ -52,7 +52,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 14,
+     "total": 22,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083699",
      "error": null,
      "records": []
@@ -81,11 +81,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 20,
+     "open": 1,
+     "total": 32,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082862",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1739356",
+       "date": "2026-10-17",
+       "category": "04",
+       "bis_status": "CLOSED",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1739356"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -112,7 +120,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 17,
+     "total": 18,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082768",
      "error": null,
      "records": []
@@ -172,7 +180,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 30,
+     "total": 35,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082766",
      "error": null,
      "records": []
@@ -201,11 +209,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 15,
+     "open": 1,
+     "total": 18,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082771",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1738323",
+       "date": "2026-10-06",
+       "category": "6M",
+       "bis_status": "CLOSED",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1738323"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -252,7 +268,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 24,
+     "total": 26,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082726",
      "error": null,
      "records": []
@@ -282,7 +298,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 10,
+     "total": 11,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082644",
      "error": null,
      "records": []
@@ -312,7 +328,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 19,
+     "total": 33,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083696",
      "error": null,
      "records": []
@@ -381,7 +397,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 9,
+     "total": 12,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083697",
      "error": null,
      "records": []
@@ -411,7 +427,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 17,
+     "total": 20,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083694",
      "error": null,
      "records": []
@@ -441,7 +457,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 25,
+     "total": 29,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082849",
      "error": null,
      "records": []
@@ -501,7 +517,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 29,
+     "total": 30,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082848",
      "error": null,
      "records": []
@@ -531,7 +547,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 63,
+     "total": 74,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082869",
      "error": null,
      "records": []
@@ -621,7 +637,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 21,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083689",
      "error": null,
      "records": []
@@ -670,7 +686,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 6,
+     "total": 15,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083693",
      "error": null,
      "records": []
@@ -700,7 +716,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 27,
+     "total": 30,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083688",
      "error": null,
      "records": []
@@ -760,7 +776,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 17,
+     "total": 20,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082857",
      "error": null,
      "records": []
@@ -790,7 +806,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 13,
+     "total": 14,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082858",
      "error": null,
      "records": []
@@ -820,7 +836,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 15,
+     "total": 22,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082852",
      "error": null,
      "records": []
@@ -849,11 +865,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 19,
+     "open": 1,
+     "total": 26,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082853",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1739245",
+       "date": "2026-10-16",
+       "category": "6M",
+       "bis_status": "ACTIVE",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1739245"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -880,7 +904,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 24,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082851",
      "error": null,
      "records": []
@@ -910,7 +934,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 10,
+     "total": 13,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083684",
      "error": null,
      "records": []
@@ -940,7 +964,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 17,
+     "total": 19,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083679",
      "error": null,
      "records": []
@@ -970,7 +994,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 74,
+     "total": 75,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083681",
      "error": null,
      "records": []
@@ -1000,7 +1024,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 11,
+     "total": 15,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083685",
      "error": null,
      "records": []
@@ -1030,7 +1054,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 20,
+     "total": 23,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082882",
      "error": null,
      "records": []
@@ -1060,7 +1084,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 19,
+     "total": 20,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082881",
      "error": null,
      "records": []
@@ -1090,7 +1114,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 72,
+     "total": 80,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082875",
      "error": null,
      "records": []
@@ -1119,11 +1143,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 47,
+     "open": 1,
+     "total": 50,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082880",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1739562",
+       "date": "2026-10-19",
+       "category": "83",
+       "bis_status": "ACTIVE",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1739562"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -1180,7 +1212,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 6,
+     "total": 7,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082877",
      "error": null,
      "records": []
@@ -1210,7 +1242,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 14,
+     "total": 19,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083682",
      "error": null,
      "records": []
@@ -1240,7 +1272,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 12,
+     "total": 17,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083686",
      "error": null,
      "records": []
@@ -1269,11 +1301,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 13,
+     "open": 1,
+     "total": 16,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083690",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1738207",
+       "date": "2026-10-05",
+       "category": "6V",
+       "bis_status": "CLOSED",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1738207"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -1299,11 +1339,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 9,
+     "open": 1,
+     "total": 11,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083691",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1739079",
+       "date": "2026-10-14",
+       "category": "4A",
+       "bis_status": "ACTIVE",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1739079"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -1330,7 +1378,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 23,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082883",
      "error": null,
      "records": []
@@ -1390,7 +1438,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 14,
+     "total": 16,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082885",
      "error": null,
      "records": []
@@ -1420,7 +1468,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 27,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082859",
      "error": null,
      "records": []
@@ -1450,7 +1498,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 25,
+     "total": 27,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082860",
      "error": null,
      "records": []
@@ -1479,11 +1527,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 20,
+     "open": 1,
+     "total": 32,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082862",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1739356",
+       "date": "2026-10-17",
+       "category": "04",
+       "bis_status": "CLOSED",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1739356"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -1509,11 +1565,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 24,
+     "open": 1,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083692",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1739894",
+       "date": "2026-10-23",
+       "category": "53",
+       "bis_status": "ACTIVE",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1739894"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -1559,7 +1623,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 17,
+     "total": 20,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083695",
      "error": null,
      "records": []
@@ -1626,7 +1690,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 17,
+     "total": 25,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1083698",
      "error": null,
      "records": []
@@ -1676,7 +1740,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 36,
+     "total": 37,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082868",
      "error": null,
      "records": []
@@ -1735,11 +1799,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 35,
+     "open": 1,
+     "total": 44,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082865",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1738759",
+       "date": "2026-10-11",
+       "category": "4A",
+       "bis_status": "CLOSED",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1738759"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -1766,7 +1838,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 24,
+     "total": 26,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082866",
      "error": null,
      "records": []
@@ -1796,7 +1868,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 27,
+     "total": 28,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082867",
      "error": null,
      "records": []
@@ -1826,7 +1898,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 23,
+     "total": 24,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082863",
      "error": null,
      "records": []
@@ -1856,7 +1928,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 97,
+     "total": 108,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1087485",
      "error": null,
      "records": []
@@ -1992,11 +2064,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 528,
+     "open": 1,
+     "total": 616,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082729",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "1738647",
+       "date": "2026-10-09",
+       "category": "53",
+       "bis_status": "ACTIVE",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=1738647"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -2023,7 +2103,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 24,
+     "total": 29,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082730",
      "error": null,
      "records": []
@@ -2053,7 +2133,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 15,
+     "total": 17,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082731",
      "error": null,
      "records": []
@@ -2083,7 +2163,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 8,
+     "total": 13,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082732",
      "error": null,
      "records": []
@@ -2143,7 +2223,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 12,
+     "total": 13,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082734",
      "error": null,
      "records": []
@@ -2173,7 +2253,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 13,
+     "total": 15,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082735",
      "error": null,
      "records": []
@@ -2203,7 +2283,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 26,
+     "total": 27,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=1082736",
      "error": null,
      "records": []
@@ -2251,7 +2331,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 140,
+     "total": 167,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=4433860",
      "error": null,
      "records": []
@@ -2315,11 +2395,19 @@
    "error": null,
    "sections": {
     "complaints": {
-     "open": 0,
-     "total": 172,
+     "open": 1,
+     "total": 195,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=4433858",
      "error": null,
-     "records": []
+     "records": [
+      {
+       "num": "4A54315",
+       "date": "2026-10-07",
+       "category": "30",
+       "bis_status": "CLOSED",
+       "url": "https://a810-bisweb.nyc.gov/bisweb/OverviewForComplaintServlet?requestid=1&complaintno=4A54315"
+      }
+     ]
     },
     "dob_violations": {
      "open": 0,
@@ -2346,7 +2434,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 196,
+     "total": 216,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=4433859",
      "error": null,
      "records": []
@@ -2394,7 +2482,7 @@
    "sections": {
     "complaints": {
      "open": 0,
-     "total": 13,
+     "total": 18,
      "url": "https://a810-bisweb.nyc.gov/bisweb/ComplaintsByAddressServlet?requestid=1&allbin=4075227",
      "error": null,
      "records": []
@@ -52565,6 +52653,356 @@
     },
     "4|104-40|queens boulevard": {
      "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "4|104-60|queens boulevard": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "4|104-70|queens boulevard": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    }
+   }
+  },
+  {
+   "t": "2026-10-26T18:40:33+00:00",
+   "counts": {
+    "1|601|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|8|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|541|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|10|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|4|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|655|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|625|east 14th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    },
+    "1|645|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|271|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|531|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|6|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|5|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|281|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|309|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|277|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|272|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|300|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|280|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|511|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|4|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|441|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|2|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|16|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|20|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|620|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|628|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|315|avenue c": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|431|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|350|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|360|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|370|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|5|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|1|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|240|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|455|east 14th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|445|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|270|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|390|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|420|east 23rd street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|440|east 23rd street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|3|peter cooper road": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|515|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|545|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|525|east 14th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|520|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|526|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|540|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|510|east 23rd street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|530|east 23rd street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 2
+    },
+    "1|7|peter cooper road": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    },
+    "1|11|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|19|stuyvesant oval": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|400|east 20th street": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|440|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|450|east 20th street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|310|first avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|8|spruce street": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 5
+    },
+    "1|460|2 avenue": {
+     "complaints": 1,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|470|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|480|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|484|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|490|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|500|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|510|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "1|520|2 avenue": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 0
+    },
+    "4|104-20|queens boulevard": {
+     "complaints": 0,
+     "dob_violations": 0,
+     "ecb_violations": 1
+    },
+    "4|104-40|queens boulevard": {
+     "complaints": 1,
      "dob_violations": 0,
      "ecb_violations": 0
     },
