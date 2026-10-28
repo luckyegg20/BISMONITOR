@@ -313,17 +313,19 @@
  },
  "1|540|east 20th street": {
   "complaint_ids": [
+   "1740305",
    "1739356"
   ],
-  "complaints": 1,
+  "complaints": 2,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|541|east 20th street": {
   "complaint_ids": [
+   "1740305",
    "1739356"
   ],
-  "complaints": 1,
+  "complaints": 2,
   "dob_violations": 0,
   "ecb_violations": 0
  },
