@@ -363,10 +363,8 @@
   "ecb_violations": 0
  },
  "1|625|east 14th street": {
-  "complaint_ids": [
-   "1738323"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 1
  },
