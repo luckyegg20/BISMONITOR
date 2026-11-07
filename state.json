@@ -422,10 +422,8 @@
   "ecb_violations": 1
  },
  "4|104-40|queens boulevard": {
-  "complaint_ids": [
-   "4A54315"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
