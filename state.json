@@ -205,11 +205,12 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
+   "1741638",
    "1741558",
    "1741303",
    "1741259"
   ],
-  "complaints": 3,
+  "complaints": 4,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -398,8 +399,8 @@
  },
  "1|6|peter cooper road": {
   "complaint_ids": [
-   "1740770",
-   "1740771"
+   "1740771",
+   "1740770"
   ],
   "complaints": 2,
   "dob_violations": 0,
