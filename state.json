@@ -107,8 +107,10 @@
   "ecb_violations": 0
  },
  "1|315|avenue c": {
-  "complaint_ids": [],
-  "complaints": 0,
+  "complaint_ids": [
+   "1742517"
+  ],
+  "complaints": 1,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -144,10 +146,11 @@
  },
  "1|400|east 20th street": {
   "complaint_ids": [
+   "1742498",
    "1741507",
    "1740709"
   ],
-  "complaints": 2,
+  "complaints": 3,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -203,17 +206,18 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
+   "1742522",
    "1742412",
    "1742293"
   ],
-  "complaints": 2,
+  "complaints": 3,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|470|2 avenue": {
   "complaint_ids": [
-   "1740778",
-   "1740779"
+   "1740779",
+   "1740778"
   ],
   "complaints": 2,
   "dob_violations": 0,
