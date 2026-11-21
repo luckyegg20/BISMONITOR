@@ -206,18 +206,19 @@
  },
  "1|460|2 avenue": {
   "complaint_ids": [
+   "1742631",
    "1742522",
    "1742412",
    "1742293"
   ],
-  "complaints": 3,
+  "complaints": 4,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|470|2 avenue": {
   "complaint_ids": [
-   "1740779",
-   "1740778"
+   "1740778",
+   "1740779"
   ],
   "complaints": 2,
   "dob_violations": 0,
@@ -401,8 +402,8 @@
   "complaint_ids": [
    "1742194",
    "1742195",
-   "1740771",
-   "1740770"
+   "1740770",
+   "1740771"
   ],
   "complaints": 4,
   "dob_violations": 0,
