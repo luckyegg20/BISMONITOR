@@ -12,11 +12,8 @@
   "ecb_violations": 0
  },
  "1|16|stuyvesant oval": {
-  "complaint_ids": [
-   "1742029",
-   "1741222"
-  ],
-  "complaints": 2,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -27,10 +24,8 @@
   "ecb_violations": 0
  },
  "1|1|stuyvesant oval": {
-  "complaint_ids": [
-   "1741546"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -107,10 +102,8 @@
   "ecb_violations": 0
  },
  "1|315|avenue c": {
-  "complaint_ids": [
-   "1742517"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -145,12 +138,8 @@
   "ecb_violations": 0
  },
  "1|400|east 20th street": {
-  "complaint_ids": [
-   "1742498",
-   "1741507",
-   "1740709"
-  ],
-  "complaints": 3,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -197,30 +186,20 @@
   "ecb_violations": 0
  },
  "1|455|east 14th street": {
-  "complaint_ids": [
-   "1740490"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|460|2 avenue": {
-  "complaint_ids": [
-   "1742631",
-   "1742522",
-   "1742412",
-   "1742293"
-  ],
-  "complaints": 4,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|470|2 avenue": {
-  "complaint_ids": [
-   "1740778",
-   "1740779"
-  ],
-  "complaints": 2,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -267,10 +246,8 @@
   "ecb_violations": 0
  },
  "1|510|east 23rd street": {
-  "complaint_ids": [
-   "1739894"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -281,10 +258,8 @@
   "ecb_violations": 0
  },
  "1|515|east 14th street": {
-  "complaint_ids": [
-   "1742204"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -325,28 +300,20 @@
   "ecb_violations": 2
  },
  "1|540|east 20th street": {
-  "complaint_ids": [
-   "1741511",
-   "1740305"
-  ],
-  "complaints": 2,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|541|east 20th street": {
-  "complaint_ids": [
-   "1741511",
-   "1740305"
-  ],
-  "complaints": 2,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
  "1|545|east 14th street": {
-  "complaint_ids": [
-   "1741909"
-  ],
-  "complaints": 1,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
@@ -399,13 +366,8 @@
   "ecb_violations": 0
  },
  "1|6|peter cooper road": {
-  "complaint_ids": [
-   "1742194",
-   "1742195",
-   "1740770",
-   "1740771"
-  ],
-  "complaints": 4,
+  "complaint_ids": [],
+  "complaints": 0,
   "dob_violations": 0,
   "ecb_violations": 0
  },
