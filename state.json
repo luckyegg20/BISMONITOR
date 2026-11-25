@@ -146,11 +146,12 @@
  },
  "1|400|east 20th street": {
   "complaint_ids": [
+   "1742990",
    "1742498",
    "1741507",
    "1740709"
   ],
-  "complaints": 3,
+  "complaints": 4,
   "dob_violations": 0,
   "ecb_violations": 0
  },
